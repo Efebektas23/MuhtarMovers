@@ -1,0 +1,6 @@
+config.js
+config-loader.js
+*.env
+.DS_Store
+node_modules
+.gemini

@@ -1,0 +1,19 @@
+# FTP Upload Ignore File
+# Bu dosyayı kullanan FTP istemcileri bu klasörleri yüklemeyecektir
+
+# Node modules - Gereksiz, projede npm kullanılmıyor
+node_modules/
+
+# Sistem dosyaları
+.DS_Store
+__MACOSX/
+*.log
+*.tmp
+
+# Konfigürasyon dosyaları (zaten sunucuda olmalı)
+.env
+.gemini
+
+# Git dosyaları (eğer kullanıyorsanız)
+.git/
+.gitignore

@@ -1,0 +1,55 @@
+FTP YÜKLEME REHBERİ - node_modules Sorunu Çözümü
+================================================
+
+Bu proje npm paketlerine ihtiyaç duymuyor (vanilla JavaScript).
+node_modules klasörünü FTP'ye yüklemeye GEREK YOK!
+
+ÇÖZÜM 1: FileZilla ile (Önerilen)
+----------------------------------
+1. FileZilla'yı açın
+2. Site Manager -> Edit -> Advanced
+3. "Transfer settings" bölümünde
+4. "Limit number of simultaneous transfers" işaretleyin
+5. VEYA daha iyi: Yükleme yaparken:
+   - Local site (sol taraf) -> node_modules klasörüne SAĞ TIKLAYIN
+   - "Add to queue" yerine "Skip" seçin
+   - VEYA node_modules'u seçmeden yükleyin
+
+ÇÖZÜM 2: Exclude Filter (FileZilla)
+------------------------------------
+1. View -> Filename filters
+2. Filter rules -> Add
+3. Filter name: "Exclude node_modules"
+4. Files: node_modules/*
+5. Directories: node_modules/
+6. Apply filter işaretle
+
+ÇÖZÜM 3: Cyberduck ile
+----------------------
+1. Yükleme yaparken
+2. node_modules klasörünü seçmeyin
+3. VEYA Bookmarks -> Edit -> Advanced -> Exclude patterns
+4. Ekleyin: node_modules
+
+ÇÖZÜM 4: Komut Satırı (rsync - Önerilen)
+-----------------------------------------
+rsync -avz --exclude 'node_modules' --exclude '.DS_Store' \
+  ./ user@server:/path/to/destination/
+
+ÖNEMLİ NOTLAR:
+--------------
+- node_modules klasörü 21MB ve gereksiz
+- Proje çalışması için node_modules'a ihtiyaç YOK
+- Sadece HTML, CSS, JS dosyaları yeterli
+- Görseller (visuals/) klasörünü unutmayın!
+
+YÜKLENMESİ GEREKEN DOSYALAR:
+-----------------------------
+✓ Tüm HTML dosyaları
+✓ Tüm JS dosyaları (game/script.js, translations.js, vb.)
+✓ Tüm CSS dosyaları
+✓ visuals/ klasörü (TAMAMEN - kamyon görselleri burada!)
+✓ config.js (sunucuda zaten varsa tekrar yüklemeyin)
+✗ node_modules/ (YÜKLEMEYİN)
+✗ .git/ (YÜKLEMEYİN)
+✗ .DS_Store (YÜKLEMEYİN)

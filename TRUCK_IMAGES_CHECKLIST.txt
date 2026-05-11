@@ -1,0 +1,36 @@
+KAMYON GÖRSELLERİ KONTROL LİSTESİ
+==================================
+
+FTP'ye yüklerken şu dosyaların yüklendiğinden emin olun:
+
+✓ visuals/Trucks/Panel Van.png
+✓ visuals/Trucks/Cargo Van.png
+✓ visuals/Trucks/10ft.png
+✓ visuals/Trucks/15ft.png
+✓ visuals/Trucks/24ft.png
+✓ visuals/Trucks/26ft.png
+✓ visuals/Trucks/28ft.png
+✓ visuals/Trucks/40ft.png
+✓ visuals/Trucks/48ft.png
+✓ visuals/Trucks/53ft.png
+
+ÖNEMLİ NOTLAR:
+--------------
+1. "Panel Van.png" ve "Cargo Van.png" dosya isimlerinde BOŞLUK var!
+2. Tüm görseller visuals/Trucks/ klasöründe olmalı
+3. Klasör yapısı: /visuals/Trucks/ (Trucks klasörü büyük T ile başlamalı)
+4. Dosya isimleri tam olarak yukarıdaki gibi olmalı (büyük/küçük harf duyarlı)
+
+SORUN GİDERME:
+--------------
+Eğer görseller hala görünmüyorsa:
+
+1. Tarayıcıda F12 -> Console'u açın
+2. Hataları kontrol edin (404 hatası = dosya bulunamadı)
+3. Network sekmesinde görsellerin yüklenip yüklenmediğini kontrol edin
+4. Görsel yollarını kontrol edin (../visuals/Trucks/ dosya_adı.png)
+
+YOL KONTROLÜ:
+-------------
+game/interactive.html -> game/data.js -> ../visuals/Trucks/Panel Van.png
+Bu yol: game klasöründen bir üst -> visuals/Trucks/Panel Van.png
