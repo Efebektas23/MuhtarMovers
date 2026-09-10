@@ -1,0 +1,475 @@
+(function () {
+  "use strict";
+
+    var EMAIL = "moving@muhtar.ca";
+  var EMAIL_US = "moving@muhtar.us";
+
+  var state = {
+    step: 1,
+    started: false,
+    completed: false,
+    from: "",
+    to: "",
+    moveType: "",
+    moveSize: "",
+    moveDate: "",
+    dateFlexible: false,
+    name: "",
+    phone: "",
+    email: "",
+    details: ""
+  };
+
+  var STEPS = 5;
+
+  function $(sel, root) {
+    return (root || document).querySelector(sel);
+  }
+
+  function $$(sel, root) {
+    return Array.prototype.slice.call((root || document).querySelectorAll(sel));
+  }
+
+  function track(name, props) {
+    var payload = props || {};
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push(Object.assign({ event: name }, payload));
+    if (typeof window.gtag === "function") {
+      window.gtag("event", name, payload);
+    }
+    var cfg = window.SECURE_CONFIG || window.CONFIG;
+    if (cfg && cfg.ENVIRONMENT && cfg.ENVIRONMENT.ENABLE_CONSOLE_LOGS) {
+      console.log("[muhtar]", name, payload);
+    }
+  }
+
+  function openQuote(opts) {
+    var dialog = $("#quote");
+    if (!dialog) return;
+    if (opts && opts.from) state.from = opts.from;
+    if (opts && opts.to) state.to = opts.to;
+    if (opts && opts.from && opts.to) state.step = 2;
+    else state.step = 1;
+
+    if (!state.started) {
+      state.started = true;
+      track("quote_form_started", { source: (opts && opts.source) || "dialog" });
+    }
+
+    syncForm();
+    renderStep();
+    if (typeof dialog.showModal === "function") dialog.showModal();
+    else dialog.setAttribute("open", "");
+    trapFocus(dialog);
+  }
+
+  function closeQuote() {
+    var dialog = $("#quote");
+    if (!dialog) return;
+    if (typeof dialog.close === "function") dialog.close();
+    else dialog.removeAttribute("open");
+    if (state.started && !state.completed) {
+      track("quote_abandonment", { last_step: state.step });
+    }
+  }
+
+  function trapFocus() {}
+
+  function syncForm() {
+    var from = $("#quote-from");
+    var to = $("#quote-to");
+    if (from) from.value = state.from;
+    if (to) to.value = state.to;
+    var date = $("#quote-date");
+    if (date) date.value = state.moveDate;
+    var flex = $("#quote-flexible");
+    if (flex) flex.checked = state.dateFlexible;
+    var name = $("#quote-name");
+    var phone = $("#quote-phone");
+    var email = $("#quote-email");
+    var details = $("#quote-details");
+    if (name) name.value = state.name;
+    if (phone) phone.value = state.phone;
+    if (email) email.value = state.email;
+    if (details) details.value = state.details;
+    $$(".choice[data-type]").forEach(function (btn) {
+      btn.classList.toggle("is-selected", btn.getAttribute("data-type") === state.moveType);
+      btn.setAttribute("aria-pressed", btn.getAttribute("data-type") === state.moveType ? "true" : "false");
+    });
+    $$(".choice[data-size]").forEach(function (btn) {
+      btn.classList.toggle("is-selected", btn.getAttribute("data-size") === state.moveSize);
+      btn.setAttribute("aria-pressed", btn.getAttribute("data-size") === state.moveSize ? "true" : "false");
+    });
+  }
+
+  function readForm() {
+    state.from = ($("#quote-from") || {}).value || state.from;
+    state.to = ($("#quote-to") || {}).value || state.to;
+    state.moveDate = ($("#quote-date") || {}).value || "";
+    state.dateFlexible = !!( $("#quote-flexible") && $("#quote-flexible").checked );
+    state.name = ($("#quote-name") || {}).value || "";
+    state.phone = ($("#quote-phone") || {}).value || "";
+    state.email = ($("#quote-email") || {}).value || "";
+    state.details = ($("#quote-details") || {}).value || "";
+  }
+
+  function setError(msg) {
+    var el = $("#quote-error");
+    if (el) el.textContent = msg || "";
+  }
+
+  function validateStep() {
+    readForm();
+    if (state.step === 1) {
+      if (!state.from.trim() || !state.to.trim()) {
+        setError("Please add both a starting city and a destination.");
+        return false;
+      }
+    }
+    if (state.step === 2 && !state.moveType) {
+      setError("Select the type of move so we can plan the right crew.");
+      return false;
+    }
+    if (state.step === 3 && !state.moveSize) {
+      setError("Choose an approximate size. “Not sure” is fine.");
+      return false;
+    }
+    if (state.step === 4 && !state.moveDate && !state.dateFlexible) {
+      setError("Add a date, or mark the date as flexible.");
+      return false;
+    }
+    if (state.step === 5) {
+      if (!state.name.trim()) {
+        setError("Please add your name.");
+        return false;
+      }
+      if (!state.phone.trim()) {
+        setError("A phone number helps us send the quote quickly.");
+        return false;
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(state.email.trim())) {
+        setError("Please add a valid email address.");
+        return false;
+      }
+    }
+    setError("");
+    return true;
+  }
+
+  var STEP_TITLES = {
+    1: "Where are you moving?",
+    2: "What type of move?",
+    3: "Approximate size",
+    4: "When are you moving?",
+    5: "How should we reach you?"
+  };
+
+  function el(id) {
+    return document.getElementById(id);
+  }
+
+  function renderStep() {
+    $$(".quote-step").forEach(function (panel) {
+      var active = Number(panel.getAttribute("data-step")) === state.step;
+      panel.classList.toggle("hidden", !active);
+      panel.toggleAttribute("hidden", !active);
+      panel.setAttribute("aria-hidden", active ? "false" : "true");
+    });
+    var progress = el("quote-progress-label");
+    if (progress) progress.textContent = "Step " + state.step + " of " + STEPS;
+    var title = el("quote-title");
+    if (title) title.textContent = STEP_TITLES[state.step] || "Your moving quote";
+    var bar = el("quote-progress-bar");
+    if (bar) bar.style.width = (state.step / STEPS) * 100 + "%";
+    var back = el("quote-back");
+    if (back) back.disabled = state.step === 1;
+    var next = el("quote-next");
+    if (next) next.textContent = state.step === STEPS ? "Request my quote" : "Continue";
+    var formView = el("quote-form-view");
+    var successView = el("quote-success-view");
+    if (formView) formView.classList.toggle("hidden", state.completed);
+    if (successView) successView.classList.toggle("hidden", !state.completed);
+    var first = $(".quote-step:not(.hidden) input, .quote-step:not(.hidden) textarea, .quote-step:not(.hidden) .choice");
+    if (first && !state.completed) setTimeout(function () { first.focus(); }, 40);
+  }
+
+  function nextStep() {
+    if (!validateStep()) return;
+    if (state.step === STEPS) {
+      submitQuote();
+      return;
+    }
+    state.step += 1;
+    track("quote_step", { step: state.step });
+    renderStep();
+  }
+
+  function prevStep() {
+    setError("");
+    if (state.step > 1) state.step -= 1;
+    renderStep();
+  }
+
+  function payload() {
+    return {
+      _subject: "Moving quote request — " + state.from + " → " + state.to,
+      _template: "table",
+      _captcha: "false",
+      _cc: EMAIL_US,
+      name: state.name,
+      phone: state.phone,
+      email: state.email,
+      moving_from: state.from,
+      moving_to: state.to,
+      move_type: state.moveType,
+      move_size: state.moveSize,
+      move_date: state.dateFlexible && !state.moveDate ? "Flexible" : state.moveDate,
+      date_flexible: state.dateFlexible ? "Yes" : "No",
+      additional_details: state.details || "(none)",
+      source: window.location.href
+    };
+  }
+
+  function mailtoHref() {
+    var body = [
+      "Moving quote request",
+      "",
+      "From: " + state.from,
+      "To: " + state.to,
+      "Type: " + state.moveType,
+      "Size: " + state.moveSize,
+      "Date: " + (state.dateFlexible && !state.moveDate ? "Flexible" : state.moveDate),
+      "Flexible: " + (state.dateFlexible ? "Yes" : "No"),
+      "",
+      "Name: " + state.name,
+      "Phone: " + state.phone,
+      "Email: " + state.email,
+      "",
+      "Details:",
+      state.details || "(none)"
+    ].join("\n");
+    return "mailto:" + EMAIL + "?cc=" + encodeURIComponent(EMAIL_US) +
+      "&subject=" + encodeURIComponent("Moving quote request — " + state.from + " → " + state.to) +
+      "&body=" + encodeURIComponent(body);
+  }
+
+  function submitQuote() {
+    var next = $("#quote-next");
+    if (next) {
+      next.disabled = true;
+      next.textContent = "Sending…";
+    }
+    var data = payload();
+
+    fetch("https://formsubmit.co/ajax/" + EMAIL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify(data)
+    }).then(function (res) {
+      if (!res.ok) throw new Error("submit failed");
+      return res.json();
+    }).then(function () {
+      finishSuccess(false);
+    }).catch(function () {
+      finishSuccess(true);
+      window.location.href = mailtoHref();
+    });
+  }
+
+  function finishSuccess(usedMailto) {
+    state.completed = true;
+    track("quote_form_completed", { method: usedMailto ? "mailto" : "form" });
+    renderStep();
+    var next = $("#quote-next");
+    if (next) {
+      next.disabled = false;
+      next.textContent = "Request my quote";
+    }
+  }
+
+  function bindPlaces() {
+    if (!window.google || !window.google.maps || !window.google.maps.places) return;
+    ["hero-from", "hero-to", "quote-from", "quote-to"].forEach(function (id) {
+      var input = document.getElementById(id);
+      if (!input || input.dataset.placesBound) return;
+      try {
+        var ac = new google.maps.places.Autocomplete(input, {
+          types: ["(cities)"],
+          componentRestrictions: { country: ["us", "ca"] },
+          fields: ["formatted_address", "name"]
+        });
+        ac.addListener("place_changed", function () {
+          var place = ac.getPlace();
+          var value = (place && (place.formatted_address || place.name)) || input.value;
+          input.value = value;
+          if (id === "hero-from" || id === "quote-from") state.from = value;
+          if (id === "hero-to" || id === "quote-to") state.to = value;
+        });
+        input.dataset.placesBound = "1";
+      } catch (err) {
+        console.warn("Places autocomplete unavailable", err);
+      }
+    });
+  }
+
+  window.initMap = bindPlaces;
+
+  function loadMaps() {
+    if (typeof window.initSecureGoogleMaps === "function") {
+      window.initSecureGoogleMaps();
+    }
+  }
+
+  function initHeader() {
+    var header = $(".site-header");
+    var toggle = $(".nav-toggle");
+    var mobile = $(".mobile-nav");
+    window.addEventListener("scroll", function () {
+      if (header) header.classList.toggle("is-compact", window.scrollY > 24);
+    }, { passive: true });
+    if (toggle && mobile) {
+      toggle.addEventListener("click", function () {
+        var open = mobile.classList.toggle("is-open");
+        toggle.setAttribute("aria-expanded", open ? "true" : "false");
+      });
+      $$(".mobile-nav a").forEach(function (link) {
+        link.addEventListener("click", function () {
+          mobile.classList.remove("is-open");
+          toggle.setAttribute("aria-expanded", "false");
+        });
+      });
+    }
+  }
+
+  function initReveal() {
+    var nodes = $$(".reveal");
+    if (!nodes.length) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      nodes.forEach(function (n) { n.classList.add("is-in"); });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-in");
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    nodes.forEach(function (n) { io.observe(n); });
+  }
+
+  function initFaq() {
+    $$(".faq-item button").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var item = btn.closest(".faq-item");
+        var opening = !item.classList.contains("is-open");
+        $$(".faq-item").forEach(function (el) {
+          el.classList.remove("is-open");
+          var b = el.querySelector("button");
+          if (b) b.setAttribute("aria-expanded", "false");
+        });
+        if (opening) {
+          item.classList.add("is-open");
+          btn.setAttribute("aria-expanded", "true");
+        }
+        track("faq_interaction", { question: btn.textContent.trim(), open: opening });
+      });
+    });
+  }
+
+  function initTracking() {
+    $$("[data-open-quote]").forEach(function (el) {
+      el.addEventListener("click", function (e) {
+        if (el.tagName === "A") e.preventDefault();
+        track("hero_cta_click", { source: el.getAttribute("data-source") || "cta" });
+        openQuote({ source: el.getAttribute("data-source") || "cta" });
+      });
+    });
+
+    document.addEventListener("click", function (e) {
+      var tel = e.target.closest && e.target.closest('a[href^="tel:"]');
+      if (tel) track("phone_click", { href: tel.getAttribute("href") });
+      var wa = e.target.closest && e.target.closest('a[href*="wa.me"]');
+      if (wa) track("whatsapp_click", { href: wa.getAttribute("href") });
+      var service = e.target.closest && e.target.closest("[data-service]");
+      if (service) track("service_engagement", { service: service.getAttribute("data-service") });
+    });
+
+    window.addEventListener("beforeunload", function () {
+      if (state.started && !state.completed) {
+        track("quote_abandonment", { last_step: state.step, reason: "unload" });
+      }
+    });
+  }
+
+  function initQuote() {
+    var dialog = $("#quote");
+    var form = $("#hero-route");
+    if (form) {
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var from = ($("#hero-from") || {}).value || "";
+        var to = ($("#hero-to") || {}).value || "";
+        if (!from.trim() || !to.trim()) {
+          openQuote({ source: "hero_route" });
+          return;
+        }
+        track("hero_cta_click", { source: "hero_route" });
+        openQuote({ from: from, to: to, source: "hero_route" });
+      });
+    }
+
+    $$(".choice[data-type]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        state.moveType = btn.getAttribute("data-type");
+        syncForm();
+        setError("");
+      });
+    });
+    $$(".choice[data-size]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        state.moveSize = btn.getAttribute("data-size");
+        syncForm();
+        setError("");
+      });
+    });
+
+    var next = $("#quote-next");
+    var back = $("#quote-back");
+    if (next) next.addEventListener("click", nextStep);
+    if (back) back.addEventListener("click", prevStep);
+    var closeBtn = $("#quote-close");
+    if (closeBtn) closeBtn.addEventListener("click", closeQuote);
+
+    if (dialog) {
+      dialog.addEventListener("cancel", function () {
+        if (state.started && !state.completed) {
+          track("quote_abandonment", { last_step: state.step, reason: "cancel" });
+        }
+      });
+    }
+
+    var date = $("#quote-date");
+    if (date) {
+      var min = new Date();
+      date.min = min.toISOString().split("T")[0];
+    }
+
+    if (window.location.hash === "#quote") {
+      openQuote({ source: "hash" });
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    initHeader();
+    initReveal();
+    initFaq();
+    initTracking();
+    initQuote();
+    loadMaps();
+    bindPlaces();
+  });
+
+  window.MuhtarQuote = { open: openQuote, close: closeQuote, track: track };
+})();
