@@ -2,6 +2,7 @@
   "use strict";
 
   var LANGS = ["en", "fr", "de", "es", "it", "ru", "tr", "zh"];
+  var LANG_KEY = "muhtar_lang";
   var HTML_LANG = {
     en: "en",
     fr: "fr",
@@ -14,8 +15,11 @@
   };
 
   function currentLang() {
-    var stored = localStorage.getItem("language") || "en";
-    return LANGS.indexOf(stored) >= 0 ? stored : "en";
+    try {
+      var stored = localStorage.getItem(LANG_KEY);
+      if (stored && LANGS.indexOf(stored) >= 0) return stored;
+    } catch (err) {}
+    return "en";
   }
 
   function dictFor(lang) {
@@ -114,7 +118,10 @@
 
   function setLanguage(lang) {
     if (LANGS.indexOf(lang) < 0) lang = "en";
-    localStorage.setItem("language", lang);
+    try {
+      localStorage.setItem(LANG_KEY, lang);
+      localStorage.removeItem("language");
+    } catch (err) {}
     apply();
     document.dispatchEvent(new CustomEvent("languageChanged", { detail: { lang: lang } }));
   }
@@ -188,6 +195,7 @@
   };
 
   function init() {
+    try { localStorage.removeItem("language"); } catch (err) {}
     document.querySelectorAll(".lang-switch").forEach(bindNewSwitcher);
     document.querySelectorAll(".language-switcher").forEach(bindOldSwitcher);
     apply();
