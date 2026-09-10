@@ -1,0 +1,489 @@
+/* Muhtar truck loader — overlays the legacy game styles */
+
+body.page-game {
+  font-family: "Manrope", "Segoe UI", sans-serif;
+  background: #f3f0ea !important;
+  color: #12151c;
+  min-height: 100vh;
+  padding-bottom: 0 !important;
+}
+
+body.page-game .site-header {
+  position: sticky;
+  background: rgba(243, 240, 234, 0.94);
+  backdrop-filter: blur(16px);
+}
+
+body.page-game .global-header,
+body.page-game .footer {
+  display: none !important;
+}
+
+#app {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 1.25rem 1.5rem 5rem;
+}
+
+.play-intro {
+  max-width: 40rem;
+  margin: 1.5rem auto 2.25rem;
+  text-align: center;
+}
+
+.play-intro .eyebrow {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #6a7078;
+  margin-bottom: 0.85rem;
+}
+
+.play-intro h1 {
+  font-family: "Cormorant", Palatino, serif;
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+  margin-bottom: 0.75rem;
+}
+
+.play-intro p {
+  color: #3a4048;
+  font-size: 1.05rem;
+}
+
+.play-steps {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  margin: 1.5rem auto 0;
+  padding: 0;
+  list-style: none;
+  max-width: 32rem;
+  border-top: 1px solid rgba(18, 21, 28, 0.1);
+}
+
+.play-steps li {
+  flex: 1;
+  padding: 0.7rem 0.4rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #6a7078;
+  border-bottom: 2px solid transparent;
+}
+
+.play-steps li.is-on {
+  color: #1a2d44;
+  border-bottom-color: #1a2d44;
+}
+
+#move-type-selection,
+#game-interface {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+}
+
+#move-type-selection h2 {
+  font-family: "Cormorant", Palatino, serif;
+  font-weight: 500;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  color: #12151c !important;
+}
+
+.move-type-buttons {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px !important;
+  background: rgba(18, 21, 28, 0.1);
+  border: 1px solid rgba(18, 21, 28, 0.1);
+  padding: 0 !important;
+}
+
+.move-type-btn {
+  height: 16rem !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  transform: none !important;
+  box-shadow: none !important;
+  background-size: cover !important;
+  background-position: center !important;
+}
+
+.move-type-btn:hover,
+.move-type-btn:active {
+  transform: none !important;
+}
+
+.card-arrow { display: none !important; }
+
+.move-type-btn .btn-text {
+  font-family: "Cormorant", Palatino, serif !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.02em;
+}
+
+.game-container {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.items-section,
+.truck-section {
+  background: #faf8f4;
+  border: 1px solid rgba(18, 21, 28, 0.1);
+  padding: 1.15rem 1.15rem 1.35rem;
+}
+
+.items-section h3,
+.truck-section h3 {
+  font-family: "Manrope", sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #6a7078;
+  margin-bottom: 1rem;
+}
+
+.room-header {
+  background: transparent !important;
+  border-bottom: 1px solid rgba(18, 21, 28, 0.1);
+  border-radius: 0 !important;
+  color: #12151c !important;
+  font-weight: 600;
+}
+
+.room-items-container {
+  display: none;
+  grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
+  gap: 0.5rem;
+  padding: 0.75rem 0 1rem;
+}
+
+.room-header.active + .room-items-container {
+  display: grid;
+}
+
+.item {
+  background: #fff !important;
+  border: 1px solid rgba(18, 21, 28, 0.12) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.item:hover {
+  border-color: #1a2d44 !important;
+  transform: none !important;
+}
+
+.item-icon,
+.item-icon i {
+  color: #1a2d44 !important;
+}
+
+.add-btn {
+  background: #1a2d44 !important;
+  border-radius: 0 !important;
+}
+
+.truck-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.85rem;
+}
+
+.truck-type {
+  font-family: "Cormorant", Palatino, serif;
+  font-size: 1.45rem;
+  font-weight: 500;
+}
+
+.capacity-bar {
+  background: rgba(18, 21, 28, 0.08) !important;
+  border-radius: 0 !important;
+  height: 1.35rem !important;
+}
+
+.capacity-fill {
+  background: #1a2d44 !important;
+  border-radius: 0 !important;
+}
+
+.capacity-text {
+  color: #12151c !important;
+  font-size: 0.7rem !important;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.truck-visual {
+  background: #1a2d44 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  min-height: 22rem !important;
+  padding: 1rem !important;
+  color: #faf8f4;
+}
+
+.truck-visual.drag-over {
+  outline: 2px solid #c4a574;
+  background: #243a56 !important;
+  transform: none !important;
+}
+
+.truck-icon {
+  display: none !important;
+}
+
+.truck-cargo {
+  width: 100%;
+  min-height: 18rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 0.45rem;
+}
+
+.drop-zone-text {
+  color: rgba(250, 247, 242, 0.55) !important;
+  width: 100%;
+  text-align: center;
+  padding: 4rem 1rem;
+  font-size: 0.95rem;
+}
+
+.loaded-item {
+  background: rgba(250, 247, 242, 0.1) !important;
+  border: 1px solid rgba(250, 247, 242, 0.18) !important;
+  color: #faf8f4 !important;
+  border-radius: 0 !important;
+  padding: 0.45rem 0.55rem !important;
+  min-width: 7.5rem;
+}
+
+.loaded-item .remove-btn {
+  background: transparent !important;
+  color: #faf8f4 !important;
+}
+
+.stats-panel {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: rgba(18, 21, 28, 0.1);
+  border: 1px solid rgba(18, 21, 28, 0.1);
+  margin-top: 1.25rem;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+}
+
+.stat-item {
+  background: #faf8f4;
+  padding: 1rem 1.1rem;
+  text-align: left !important;
+}
+
+.stat-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #6a7078;
+}
+
+.stat-value {
+  font-family: "Cormorant", Palatino, serif;
+  font-size: 1.7rem;
+  font-weight: 500;
+  color: #12151c !important;
+}
+
+.controls {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+  justify-content: flex-end;
+}
+
+body.page-game .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  padding: 0.95rem 1.4rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 0 !important;
+  background: #1a2d44;
+  color: #faf8f4;
+  cursor: pointer;
+}
+
+body.page-game .btn-secondary,
+body.page-game .btn-warning {
+  background: transparent !important;
+  color: #12151c !important;
+  border-color: rgba(18, 21, 28, 0.22) !important;
+}
+
+body.page-game .modal {
+  background: rgba(14, 23, 36, 0.55) !important;
+}
+
+body.page-game .modal-content {
+  background: #faf8f4 !important;
+  border-radius: 0 !important;
+  max-width: 40rem;
+  width: min(40rem, calc(100vw - 1.5rem));
+  max-height: calc(100svh - 2rem);
+  overflow: auto;
+  box-shadow: 0 24px 60px rgba(18, 21, 28, 0.28);
+}
+
+body.page-game .modal-header {
+  border-bottom: 1px solid rgba(18, 21, 28, 0.1);
+}
+
+body.page-game .modal-header h2 {
+  font-family: "Cormorant", Palatino, serif;
+  font-weight: 500;
+  font-size: 1.7rem;
+}
+
+.share-form {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(18, 21, 28, 0.1);
+}
+
+.share-form h3 {
+  font-family: "Cormorant", Palatino, serif;
+  font-size: 1.55rem;
+  font-weight: 500;
+  margin-bottom: 0.4rem;
+}
+
+.share-form .share-lede {
+  color: #3a4048;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+.share-form label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #6a7078;
+  margin: 0.7rem 0 0.3rem;
+}
+
+.share-form input,
+.share-form textarea {
+  width: 100%;
+  border: 1px solid rgba(18, 21, 28, 0.2);
+  background: #fff;
+  padding: 0.75rem 0.8rem;
+  font: inherit;
+}
+
+.share-form textarea { min-height: 5rem; resize: vertical; }
+
+.share-form .field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.7rem;
+}
+
+.share-error {
+  color: #8a2f2f;
+  font-size: 0.85rem;
+  margin: 0.6rem 0 0;
+}
+
+.share-form .btn {
+  width: 100%;
+  margin-top: 1.1rem;
+}
+
+.share-success {
+  text-align: center;
+  padding: 1.5rem 0.5rem;
+}
+
+.share-success h3 {
+  font-family: "Cormorant", Palatino, serif;
+  font-size: 1.8rem;
+  margin: 0.4rem 0 0.6rem;
+}
+
+.packing-option {
+  display: block;
+  border: 1px solid rgba(18, 21, 28, 0.12);
+  padding: 0.85rem 0.95rem;
+  margin-bottom: 0.5rem;
+  background: #fff;
+}
+
+.packing-option .option-title {
+  display: block;
+  font-weight: 600;
+}
+
+.packing-option .option-desc,
+.packing-option .option-price {
+  display: block;
+  font-size: 0.85rem;
+  color: #6a7078;
+}
+
+.cost-disclaimer,
+.range-note {
+  font-size: 0.85rem;
+  color: #6a7078;
+}
+
+.loaded-item-card {
+  border: 1px solid rgba(18, 21, 28, 0.1);
+  background: #fff;
+  border-radius: 0 !important;
+}
+
+.notification {
+  background: #1a2d44 !important;
+  color: #faf8f4 !important;
+  border-radius: 0 !important;
+}
+
+@media (max-width: 900px) {
+  .game-container,
+  .move-type-buttons,
+  .stats-panel,
+  .share-form .field-row {
+    grid-template-columns: 1fr;
+  }
+
+  .move-type-btn { height: 12rem !important; }
+
+  .controls {
+    position: sticky;
+    bottom: 0;
+    background: #f3f0ea;
+    padding: 0.75rem 0 calc(0.75rem + env(safe-area-inset-bottom));
+    justify-content: stretch;
+  }
+
+  .controls .btn { flex: 1; }
+}

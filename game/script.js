@@ -15,6 +15,45 @@ let gameState = {
     distance: 0
 };
 
+const SHARE_EMAIL = 'moving@muhtar.ca';
+const SHARE_EMAIL_US = 'moving@muhtar.us';
+let shareFormBound = false;
+
+function gt(key, fallback) {
+    if (window.MuhtarI18n && typeof window.MuhtarI18n.t === 'function') {
+        const value = window.MuhtarI18n.t(key);
+        if (value && value !== key) return value;
+    }
+    return fallback || key;
+}
+
+function setPlayStep(step) {
+    document.querySelectorAll('#play-steps li').forEach(function (li) {
+        li.classList.toggle('is-on', li.getAttribute('data-step') === step);
+    });
+}
+
+function groupedInventoryLines() {
+    const groups = {};
+    gameState.loadedItems.forEach(function (item) {
+        if (groups[item.name]) {
+            groups[item.name].quantity += 1;
+            groups[item.name].totalVolume += item.volume;
+            groups[item.name].totalWeight += item.weight;
+        } else {
+            groups[item.name] = {
+                name: item.name,
+                quantity: 1,
+                totalVolume: item.volume,
+                totalWeight: item.weight
+            };
+        }
+    });
+    return Object.values(groups).map(function (group) {
+        return group.name + ' x' + group.quantity + ' (' + group.totalVolume.toFixed(1) + ' m³, ' + group.totalWeight + ' lbs)';
+    });
+}
+
 // DOM Elements
 let elements = {};
 
@@ -124,7 +163,19 @@ function setupEventListeners() {
 
     const bookTruckBtn = document.getElementById('book-truck');
     if (bookTruckBtn) {
-        bookTruckBtn.addEventListener('click', bookTruck);
+        bookTruckBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            bookTruck();
+        });
+    }
+
+    const shareForm = document.getElementById('inventory-share-form');
+    if (shareForm && !shareFormBound) {
+        shareFormBound = true;
+        shareForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            bookTruck();
+        });
     }
 
     const playAgainBtn = document.getElementById('play-again');
@@ -178,7 +229,8 @@ function handleMoveTypeSelection(e) {
         }
 
         populateItems(moveType);
-        showNotification(`${moveType.charAt(0).toUpperCase() + moveType.slice(1)} move selected!`, 'success');
+        setPlayStep('load');
+        showNotification(gt('estimator_type_selected', 'Move type selected. Load the bay.'), 'success');
     }, 500);
 }
 
@@ -190,17 +242,18 @@ function populateItems(moveType) {
 
     if (moveType === 'residential') {
         const roomNames = {
-            livingRoom: { name: '🛋️ Living Room', icon: '🛋️' },
-            kitchen: { name: '🍽️ Kitchen', icon: '🍽️' },
-            bedroom: { name: '🛏️ Bedroom', icon: '🛏️' },
-            bathroom: { name: '🚿 Bathroom', icon: '🚿' },
-            homeOffice: { name: '💻 Home Office', icon: '💻' },
-            garage: { name: '🚗 Garage', icon: '🚗' },
-            storage: { name: '📦 Storage & Boxes', icon: '📦' },
-            outdoor: { name: '🌳 Outdoor', icon: '🌳' },
-            specialItems: { name: '⭐ Special Items', icon: '⭐' }
+            livingRoom: { key: 'room_living', fallback: 'Living room' },
+            kitchen: { key: 'room_kitchen', fallback: 'Kitchen' },
+            bedroom: { key: 'room_bedroom', fallback: 'Bedroom' },
+            bathroom: { key: 'room_bathroom', fallback: 'Bathroom' },
+            homeOffice: { key: 'room_office', fallback: 'Home office' },
+            garage: { key: 'room_garage', fallback: 'Garage' },
+            storage: { key: 'room_storage', fallback: 'Storage and boxes' },
+            outdoor: { key: 'room_outdoor', fallback: 'Outdoor' },
+            specialItems: { key: 'room_special', fallback: 'Special items' }
         };
 
+        let firstRoom = true;
         Object.keys(roomNames).forEach(roomKey => {
             const roomItems = itemData.residential[roomKey];
             if (roomItems && roomItems.length > 0) {
@@ -210,11 +263,17 @@ function populateItems(moveType) {
 
                 const roomHeader = document.createElement('div');
                 roomHeader.className = 'room-header';
-                roomHeader.innerHTML = `<span class="room-icon">${roomInfo.icon}</span> <span class="room-name">${roomInfo.name}</span><span class="room-toggle">▶</span>`;
+                const roomLabel = gt(roomInfo.key, roomInfo.fallback);
+                roomHeader.innerHTML = `<span class="room-name">${roomLabel}</span><span class="room-toggle">+</span>`;
 
                 const roomItemsContainer = document.createElement('div');
                 roomItemsContainer.className = 'room-items-container';
-                roomItemsContainer.style.display = 'none';
+                roomItemsContainer.style.display = firstRoom ? 'grid' : 'none';
+                if (firstRoom) {
+                    roomHeader.classList.add('active');
+                    roomHeader.querySelector('.room-toggle').textContent = '−';
+                    firstRoom = false;
+                }
 
                 roomItems.forEach(item => {
                     const itemElement = createItemElement(item, itemIndex++);
@@ -224,7 +283,8 @@ function populateItems(moveType) {
                 roomHeader.addEventListener('click', () => {
                     const isHidden = roomItemsContainer.style.display === 'none';
                     roomItemsContainer.style.display = isHidden ? 'grid' : 'none';
-                    roomHeader.querySelector('.room-toggle').textContent = isHidden ? '▼' : '▶';
+                    roomHeader.querySelector('.room-toggle').textContent = isHidden ? '−' : '+';
+                    roomHeader.classList.toggle('active', isHidden);
                 });
 
                 roomContainer.appendChild(roomHeader);
@@ -291,7 +351,7 @@ function createItemElement(item, index) {
         <div class="item-icon"><i class="${item.icon}"></i></div>
         <div class="item-name">${item.name}</div>
         <div class="item-specs">${item.volume}m³ (${volumeInFt3}ft³) • ${item.weight}lbs</div>
-        <div class="click-hint">Click + or tap to add</div>
+        <div class="click-hint">Tap to add</div>
     `;
 
     // Add button click handler (separate from item click)
@@ -525,7 +585,7 @@ function checkTruckUpgrade() {
         const newTruck = truckData[newTruckIndex];
 
         updateTruckDisplay();
-        showNotification(`🚛 Upgraded to ${newTruck.type} ${newTruck.icon}!`, 'warning');
+        showNotification(`Upgraded to ${newTruck.type}.`, 'warning');
     }
 }
 
@@ -537,32 +597,8 @@ function updateTruckDisplay() {
     }
 
     if (elements.truckIcon) {
-        // Remove all truck classes
         elements.truckIcon.className = 'truck-icon';
-
-        // Add current truck class
-        if (truck.cssClass) {
-            elements.truckIcon.classList.add(truck.cssClass);
-        }
-
-        // Replace emoji with image if available
-        if (truck.image) {
-            // Check if img element already exists
-            let imgElement = elements.truckIcon.querySelector('img');
-            if (imgElement) {
-                imgElement.src = truck.image;
-            } else {
-                // Clear text content and add image
-                elements.truckIcon.innerHTML = '';
-                imgElement = document.createElement('img');
-                imgElement.src = truck.image;
-                imgElement.alt = truck.type;
-                elements.truckIcon.appendChild(imgElement);
-            }
-        } else {
-            // Fallback to emoji if no image
-            elements.truckIcon.textContent = truck.icon;
-        }
+        elements.truckIcon.innerHTML = '';
     }
 }
 
@@ -838,7 +874,7 @@ function removeItemFromTruckVisual(itemId) {
 
 function showResults() {
     if (gameState.loadedItems.length === 0) {
-        showNotification('Please add some items to your truck first!', 'warning');
+        showNotification(gt('estimator_add_items_first', 'Add items to the bay first.'), 'warning');
         return;
     }
 
@@ -867,6 +903,17 @@ function showResults() {
     if (modal) {
         modal.style.display = 'flex';
         modal.classList.remove('hidden');
+        setPlayStep('share');
+        const shareForm = document.getElementById('inventory-share-form');
+        if (shareForm) {
+            const success = document.getElementById('share-success');
+            const submitBtn = document.getElementById('book-truck');
+            if (success) success.hidden = true;
+            if (submitBtn) submitBtn.hidden = false;
+            setTimeout(function () {
+                shareForm.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+            }, 120);
+        }
     }
 }
 
@@ -927,7 +974,7 @@ function displayLoadedItemsList() {
     // Add summary
     html += `
         <div class="items-summary">
-            <strong>📊 Summary</strong>
+            <strong>Summary</strong>
             <div class="summary-stats">
                 <div class="summary-stat">
                     <div class="summary-stat-value">${gameState.itemCount}</div>
@@ -1037,12 +1084,14 @@ function setupOriginalModalListeners() {
         newCalculateCostBtn.addEventListener('click', calculateCost);
     }
 
-    // Book truck button
-    const bookTruckBtn = document.getElementById('book-truck');
-    if (bookTruckBtn) {
-        bookTruckBtn.replaceWith(bookTruckBtn.cloneNode(true));
-        const newBookTruckBtn = document.getElementById('book-truck');
-        newBookTruckBtn.addEventListener('click', bookTruck);
+    // Book truck button is handled by the inventory share form
+    const shareForm = document.getElementById('inventory-share-form');
+    if (shareForm && !shareFormBound) {
+        shareFormBound = true;
+        shareForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            bookTruck();
+        });
     }
 
     // Play again button
@@ -1062,7 +1111,7 @@ function displayBoxRequirements() {
 
     // Display boxes
     if (gameState.boxRequirements.length > 0) {
-        html += '<h4>📦 Moving Boxes</h4>';
+        html += '<h4>Moving boxes</h4>';
         html += '<div class="box-grid">';
 
         gameState.boxRequirements.forEach(box => {
@@ -1084,7 +1133,7 @@ function displayBoxRequirements() {
 
     // Display protection materials
     if (gameState.protectionRequirements.length > 0) {
-        html += '<h4>🛡️ Protection Materials</h4>';
+        html += '<h4>Protection materials</h4>';
         html += '<div class="protection-grid">';
 
         gameState.protectionRequirements.forEach(material => {
@@ -1292,131 +1341,133 @@ function calculateCost() {
 }
 
 function bookTruck() {
-    // Get current values from DOM if not in gameState
-    const pickupInput = document.getElementById('pickup-input');
-    const dropoffInput = document.getElementById('dropoff-input');
-    const estimatedCostElement = document.getElementById('estimated-cost');
-
-    // Collect all the form data
-    const moveData = {
-        moveType: gameState.currentMoveType,
-        truckType: truckData[gameState.currentTruckIndex].type,
-        totalVolume: gameState.totalVolume,
-        totalWeight: gameState.totalWeight,
-        itemCount: gameState.itemCount,
-        packingOption: gameState.selectedPackingOption,
-        distance: gameState.distance,
-        estimatedCost: gameState.estimatedCost || (estimatedCostElement ? estimatedCostElement.textContent.replace('$', '').replace(',', '') : '0'),
-        items: gameState.loadedItems,
-        boxRequirements: gameState.boxRequirements,
-        specialHandling: gameState.protectionRequirements,
-        pickupAddress: gameState.pickupAddress || (pickupInput ? pickupInput.value : ''),
-        dropoffAddress: gameState.dropoffAddress || (dropoffInput ? dropoffInput.value : '')
-    };
-
-    // Create email content
-    const emailSubject = encodeURIComponent('Moving Quote Request - Interactive Estimator');
-
-    // Format items list
-    const itemsList = moveData.items.map(item => {
-        return `• ${item.name} (${item.volume.toFixed(1)} m³, ${item.weight} lbs)`;
-    }).join('\n');
-
-    // Format box requirements
-    const boxesList = moveData.boxRequirements.map(box => {
-        return `• ${box.type}: ${box.quantity} boxes needed`;
-    }).join('\n');
-
-    // Format special handling
-    const specialHandlingList = moveData.specialHandling.map(special => {
-        return `• ${special.item}: ${special.reason}`;
-    }).join('\n');
-
-    // Create detailed email body
-    const emailBody = encodeURIComponent(`
-MOVING QUOTE REQUEST - INTERACTIVE ESTIMATOR
-============================================
-
-CUSTOMER INFORMATION:
-Please fill in your contact details below:
-
-Name: [Your Full Name]
-Phone: [Your Phone Number]  
-Email: [Your Email Address]
-Preferred Contact Method: [Phone/Email]
-Move Date: [Preferred Moving Date]
-
-============================================
-
-MOVE DETAILS:
-- Move Type: ${moveData.moveType.charAt(0).toUpperCase() + moveData.moveType.slice(1)}
-- Recommended Truck: ${moveData.truckType}
-- Total Volume: ${moveData.totalVolume.toFixed(1)} m³
-- Total Weight: ${moveData.totalWeight.toLocaleString()} lbs
-- Number of Items: ${moveData.itemCount}
-- Distance: ${moveData.distance} miles
-- Estimated Cost: $${moveData.estimatedCost.toLocaleString()}
-
-ADDRESSES:
-- Pickup: ${moveData.pickupAddress || '[Please specify pickup address]'}
-- Drop-off: ${moveData.dropoffAddress || '[Please specify drop-off address]'}
-
-PACKING SERVICE:
-- Selected Option: ${moveData.packingOption === 'self' ? 'Self Packing' : moveData.packingOption === 'partial' ? 'Partial Packing Service' : 'Full Packing Service'}
-
-ITEMS TO MOVE:
-${itemsList}
-
-${boxesList ? `PACKING MATERIALS NEEDED:
-${boxesList}
-
-` : ''}${specialHandlingList ? `SPECIAL HANDLING REQUIRED:
-${specialHandlingList}
-
-` : ''}ADDITIONAL NOTES:
-[Please add any special requirements, access issues, or other important details]
-
-============================================
-
-REQUEST DETAILS:
-- Generated: ${new Date().toLocaleString()}
-- Source: Interactive Moving Estimator
-- Website: Muhtar Movers
-
-Please contact me to finalize this moving quote and schedule the service.
-
-Thank you for choosing Muhtar Movers!
-`);
-
-    // Create mailto link with both addresses
-    const mailtoLink = `mailto:moving@muhtar.ca?cc=moving@muhtar.us&subject=${emailSubject}&body=${emailBody}`;
-
-    // Validate that user has selected items
-    if (moveData.itemCount === 0) {
-        showNotification('Please add some items to your move before booking!', 'error');
+    if (gameState.itemCount === 0) {
+        showNotification(gt('estimator_add_items_first', 'Add items to the bay first.'), 'error');
         return;
     }
 
-    // Show confirmation
-    const confirmMessage = `Ready to send your moving quote request?
+    const name = ((document.getElementById('share-name') || {}).value || '').trim();
+    const phone = ((document.getElementById('share-phone') || {}).value || '').trim();
+    const email = ((document.getElementById('share-email') || {}).value || '').trim();
+    const date = ((document.getElementById('share-date') || {}).value || '').trim();
+    const notes = ((document.getElementById('share-notes') || {}).value || '').trim();
+    const err = document.getElementById('share-error');
 
-✓ ${moveData.itemCount} items selected
-✓ ${moveData.truckType} recommended
-✓ Estimated cost: $${moveData.estimatedCost}
-
-This will open your email client to send the quote request to moving@muhtar.ca and moving@muhtar.us`;
-
-    if (confirm(confirmMessage)) {
-        // Open email client
-        window.location.href = mailtoLink;
-
-        showNotification('Opening your email client to send the quote request...', 'success');
-
-        // Close modal after a brief delay
-        setTimeout(() => {
-            closeModal();
-        }, 2000);
+    if (!name || !phone || !email) {
+        if (err) {
+            err.hidden = false;
+            err.textContent = gt('estimator_share_required', 'Name, phone and email are required.');
+        }
+        return;
     }
+    if (err) {
+        err.hidden = true;
+        err.textContent = '';
+    }
+
+    const pickupInput = document.getElementById('pickup-input');
+    const dropoffInput = document.getElementById('dropoff-input');
+    const inventory = groupedInventoryLines().join('\n');
+    const packing = gameState.selectedPackingOption === 'self'
+        ? 'Self packing'
+        : gameState.selectedPackingOption === 'partial'
+            ? 'Partial packing'
+            : 'Full packing';
+    const rangeEl = document.getElementById('estimated-cost');
+    const pickup = gameState.pickupAddress || (pickupInput ? pickupInput.value : '') || '';
+    const dropoff = gameState.dropoffAddress || (dropoffInput ? dropoffInput.value : '') || '';
+    const moveType = gameState.currentMoveType
+        ? gameState.currentMoveType.charAt(0).toUpperCase() + gameState.currentMoveType.slice(1)
+        : '';
+
+    const payload = {
+        _subject: 'Inventory from truck loader — ' + name,
+        _template: 'table',
+        _captcha: 'false',
+        _cc: SHARE_EMAIL_US,
+        name: name,
+        phone: phone,
+        email: email,
+        move_date: date || 'Not specified',
+        notes: notes || '(none)',
+        move_type: moveType,
+        recommended_truck: truckData[gameState.currentTruckIndex].type,
+        total_volume_m3: gameState.totalVolume.toFixed(1),
+        total_weight_lbs: String(gameState.totalWeight),
+        item_count: String(gameState.itemCount),
+        packing: packing,
+        pickup: pickup || '(not set)',
+        dropoff: dropoff || '(not set)',
+        distance_miles: String(gameState.distance || ''),
+        planning_range: rangeEl ? rangeEl.textContent : '(not calculated)',
+        inventory: inventory,
+        source: window.location.href
+    };
+
+    const submitBtn = document.getElementById('book-truck');
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = gt('estimator_share_sending', 'Sending…');
+    }
+
+    const bodyLines = [
+        'Truck loader inventory',
+        '',
+        'Name: ' + name,
+        'Phone: ' + phone,
+        'Email: ' + email,
+        'Date: ' + (date || 'Not specified'),
+        'Notes: ' + (notes || '(none)'),
+        '',
+        'Move type: ' + moveType,
+        'Truck: ' + truckData[gameState.currentTruckIndex].type,
+        'Volume: ' + gameState.totalVolume.toFixed(1) + ' m3',
+        'Weight: ' + gameState.totalWeight + ' lbs',
+        'Items: ' + gameState.itemCount,
+        'Packing: ' + packing,
+        'Pickup: ' + (pickup || '(not set)'),
+        'Drop-off: ' + (dropoff || '(not set)'),
+        '',
+        'INVENTORY',
+        inventory
+    ].join('\n');
+
+    const mailto = 'mailto:' + SHARE_EMAIL +
+        '?cc=' + encodeURIComponent(SHARE_EMAIL_US) +
+        '&subject=' + encodeURIComponent('Inventory from truck loader — ' + name) +
+        '&body=' + encodeURIComponent(bodyLines);
+
+    fetch('https://formsubmit.co/ajax/' + SHARE_EMAIL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(payload)
+    }).then(function (res) {
+        if (!res.ok) throw new Error('submit failed');
+        return res.json();
+    }).then(function () {
+        finishShare(false);
+    }).catch(function () {
+        finishShare(true);
+        window.location.href = mailto;
+    });
+}
+
+function finishShare(usedMailto) {
+    const submitBtn = document.getElementById('book-truck');
+    const success = document.getElementById('share-success');
+    if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.hidden = true;
+        submitBtn.textContent = gt('estimator_get_quote', 'Send my inventory');
+    }
+    if (success) success.hidden = false;
+    showNotification(gt('estimator_share_sent', 'Inventory sent.'), 'success');
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+        event: 'inventory_shared',
+        method: usedMailto ? 'mailto' : 'form',
+        items: gameState.itemCount
+    });
 }
 
 function playAgain() {
@@ -1471,20 +1522,20 @@ function resetGame() {
 
     const truckCargo = document.getElementById('truck-cargo');
     if (truckCargo) {
-        truckCargo.innerHTML = '<div class="drop-zone-text">Drag items here</div>';
+        truckCargo.innerHTML = '<div class="drop-zone-text" data-translate="estimator_drop_zone">' +
+            gt('estimator_drop_zone', 'Tap an item to load it into the bay') + '</div>';
     }
 
-    // Reset truck display
+    setPlayStep('type');
     updateTruckDisplay();
     updateStats();
     updateCapacityDisplay();
 
-    // Reset move type buttons
     document.querySelectorAll('.move-type-btn').forEach(btn => {
         btn.classList.remove('selected');
     });
 
-    showNotification('Game reset! Choose your move type to start again.', 'success');
+    showNotification(gt('estimator_reset', 'Choose a move type to start again.'), 'success');
 }
 
 function showNotification(message, type = 'info') {
