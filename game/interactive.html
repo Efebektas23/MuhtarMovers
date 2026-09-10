@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Moving Truck Calculator</title>
+    <title data-translate-title="page_title_estimator">Interactive Moving Truck Calculator</title>
     <link rel="stylesheet" href="styles.css">
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -669,12 +669,12 @@
                 Muhtar Movers
             </a>
             <nav class="nav">
-                <a href="../index.html#services">Services</a>
-                <a href="../index.html#about">About</a>
-                <a href="interactive.html" class="active">Interactive Estimator</a>
-                <a href="../index.html#contact">Contact</a>
+                <a href="../index.html#services" data-translate="nav_services">Services</a>
+                <a href="../index.html#about" data-translate="nav_about">About</a>
+                <a href="interactive.html" class="active" data-translate="nav_estimator">Interactive Estimator</a>
+                <a href="../index.html#contact" data-translate="nav_contact">Contact</a>
             </nav>
-            <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Menu">
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()" data-translate-aria="nav_menu" aria-label="Menu">
                 <span style="font-size: 24px; font-weight: bold;">☰</span>
             </button>
             <div class="language-switcher">
@@ -717,29 +717,29 @@
 
         <!-- Move Type Selection -->
         <section id="move-type-selection" class="section">
-            <h2>What type of move are you planning?</h2>
+            <h2 data-translate="estimator_move_type_title">What type of move are you planning?</h2>
             <div class="move-type-buttons">
                 <button class="move-type-btn residential-card" data-type="residential">
                     <div class="card-overlay"></div>
                     <div class="card-content">
-                        <div class="btn-text">Residential</div>
-                        <div class="btn-desc">Household items & furniture</div>
+                        <div class="btn-text" data-translate="estimator_residential">Residential</div>
+                        <div class="btn-desc" data-translate="estimator_residential_desc">Household items & furniture</div>
                         <div class="card-arrow">→</div>
                     </div>
                 </button>
                 <button class="move-type-btn office-card" data-type="office">
                     <div class="card-overlay"></div>
                     <div class="card-content">
-                        <div class="btn-text">Office</div>
-                        <div class="btn-desc">Desks, chairs & equipment</div>
+                        <div class="btn-text" data-translate="estimator_office">Office</div>
+                        <div class="btn-desc" data-translate="estimator_office_desc">Desks, chairs & equipment</div>
                         <div class="card-arrow">→</div>
                     </div>
                 </button>
                 <button class="move-type-btn commercial-card" data-type="commercial">
                     <div class="card-overlay"></div>
                     <div class="card-content">
-                        <div class="btn-text">Commercial</div>
-                        <div class="btn-desc">Large equipment & inventory</div>
+                        <div class="btn-text" data-translate="estimator_commercial">Commercial</div>
+                        <div class="btn-desc" data-translate="estimator_commercial_desc">Large equipment & inventory</div>
                         <div class="card-arrow">→</div>
                     </div>
                 </button>
@@ -751,7 +751,7 @@
             <div class="game-container">
                 <!-- Items Palette -->
                 <div class="items-section">
-                    <h3>Available Items</h3>
+                    <h3 data-translate="estimator_available_items">Available Items</h3>
                     <div class="items-grid" id="items-grid">
                         <!-- Items will be populated by JavaScript -->
                     </div>
@@ -759,7 +759,7 @@
 
                 <!-- Truck Section -->
                 <div class="truck-section">
-                    <h3>Your Moving Truck</h3>
+                    <h3 data-translate="estimator_your_truck">Your Moving Truck</h3>
                     <div class="truck-info">
                         <div class="truck-type" id="truck-type">Panel Van</div>
                         <div class="capacity-display">
@@ -773,7 +773,7 @@
                         <div class="truck-visual" id="truck-visual">
                             <div class="truck-icon"></div>
                             <div class="truck-cargo" id="truck-cargo">
-                                <div class="drop-zone-text">Click an item or drag it here to start your estimate</div>
+                                <div class="drop-zone-text" data-translate="estimator_drop_zone">Click an item or drag it here to start your estimate</div>
                             </div>
                         </div>
                     </div>
@@ -783,23 +783,23 @@
             <!-- Stats Panel -->
             <div class="stats-panel">
                 <div class="stat-item">
-                    <div class="stat-label">Total Volume</div>
+                    <div class="stat-label" data-translate="estimator_total_volume">Total Volume</div>
                     <div class="stat-value" id="total-volume">0 m³</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-label">Total Weight</div>
+                    <div class="stat-label" data-translate="estimator_total_weight">Total Weight</div>
                     <div class="stat-value" id="total-weight">0 lbs</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-label">Items Loaded</div>
+                    <div class="stat-label" data-translate="estimator_items_loaded">Items Loaded</div>
                     <div class="stat-value" id="items-count">0</div>
                 </div>
             </div>
 
             <!-- Controls -->
             <div class="controls">
-                <button id="calculate-btn" class="btn btn-primary">Calculate Final Results</button>
-                <button id="reset-btn" class="btn btn-secondary">Start Over</button>
+                <button id="calculate-btn" class="btn btn-primary" data-translate="estimator_calculate_results">Calculate Final Results</button>
+                <button id="reset-btn" class="btn btn-secondary" data-translate="estimator_start_over">Start Over</button>
             </div>
         </section>
 
@@ -807,66 +807,66 @@
         <div id="results-modal" class="modal hidden">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2>📋 Moving Summary</h2>
+                    <h2 data-translate="estimator_moving_summary">📋 Moving Summary</h2>
                     <button class="close-btn" id="close-modal">&times;</button>
                 </div>
                 <div class="modal-body">
                     <div class="result-item">
-                        <strong>Recommended Truck:</strong>
+                        <strong data-translate="estimator_recommended_truck">Recommended Truck:</strong>
                         <span id="final-truck-type">Panel Van</span>
                     </div>
                     <div class="result-item">
-                        <strong>Total Volume:</strong>
+                        <strong data-translate="estimator_total_volume">Total Volume:</strong>
                         <span id="final-volume">0 m³</span>
                     </div>
                     <div class="result-item">
-                        <strong>Total Weight:</strong>
+                        <strong data-translate="estimator_total_weight">Total Weight:</strong>
                         <span id="final-weight">0 lbs</span>
                     </div>
                     <div class="result-item">
-                        <strong>Items Count:</strong>
+                        <strong data-translate="estimator_items_count">Items Count:</strong>
                         <span id="final-items">0</span>
                     </div>
 
                     <!-- Loaded Items List -->
                     <div class="loaded-items-section">
-                        <h3>📦 Your Items</h3>
+                        <h3 data-translate="estimator_your_items">📦 Your Items</h3>
                         <div id="loaded-items-list" class="loaded-items-list"></div>
                         <div class="items-actions">
-                            <button id="add-more-items" class="btn btn-secondary">➕ Add More Items</button>
-                            <button id="clear-all-items" class="btn btn-warning">🗑️ Clear All</button>
+                            <button id="add-more-items" class="btn btn-secondary" data-translate="estimator_add_more">➕ Add More Items</button>
+                            <button id="clear-all-items" class="btn btn-warning" data-translate="estimator_clear_all">🗑️ Clear All</button>
                         </div>
                     </div>
 
                     <!-- Packing Service Selection -->
                     <div class="packing-section">
-                        <h3>📦 Packing Service</h3>
+                        <h3 data-translate="estimator_packing_service">📦 Packing Service</h3>
                         <div class="packing-options">
                             <label class="packing-option">
                                 <input type="radio" name="packing" value="self" checked
                                     onchange="updatePackingOption(this.value)">
                                 <div class="option-content">
-                                    <span class="option-title">🏠 Self Packing</span>
-                                    <span class="option-desc">You pack your own items</span>
-                                    <span class="option-price">No extra cost</span>
+                                    <span class="option-title" data-translate="estimator_self_packing">🏠 Self Packing</span>
+                                    <span class="option-desc" data-translate="estimator_self_packing_desc">You pack your own items</span>
+                                    <span class="option-price" data-translate="estimator_no_extra_cost">No extra cost</span>
                                 </div>
                             </label>
                             <label class="packing-option">
                                 <input type="radio" name="packing" value="partial"
                                     onchange="updatePackingOption(this.value)">
                                 <div class="option-content">
-                                    <span class="option-title">🔧 Partial Packing</span>
-                                    <span class="option-desc">We pack fragile & valuable items</span>
-                                    <span class="option-price">+25% service cost</span>
+                                    <span class="option-title" data-translate="estimator_partial_packing">🔧 Partial Packing</span>
+                                    <span class="option-desc" data-translate="estimator_partial_packing_desc">We pack fragile & valuable items</span>
+                                    <span class="option-price" data-translate="estimator_partial_cost">+25% service cost</span>
                                 </div>
                             </label>
                             <label class="packing-option">
                                 <input type="radio" name="packing" value="full"
                                     onchange="updatePackingOption(this.value)">
                                 <div class="option-content">
-                                    <span class="option-title">👷 Full Service</span>
-                                    <span class="option-desc">We pack everything for you</span>
-                                    <span class="option-price">+60% service cost</span>
+                                    <span class="option-title" data-translate="estimator_full_service">👷 Full Service</span>
+                                    <span class="option-desc" data-translate="estimator_full_service_desc">We pack everything for you</span>
+                                    <span class="option-price" data-translate="estimator_full_cost">+60% service cost</span>
                                 </div>
                             </label>
                         </div>
@@ -874,47 +874,49 @@
 
                     <!-- Box Requirements -->
                     <div class="box-requirements">
-                        <h3>📦 Packing Materials & Special Handling</h3>
+                        <h3 data-translate="estimator_packing_materials">📦 Packing Materials & Special Handling</h3>
                         <div id="box-list" class="box-list"></div>
                     </div>
 
                     <div class="cost-section">
-                        <h3>💰 Cost Estimation</h3>
+                        <h3 data-translate="estimator_cost_estimation">💰 Cost Estimation</h3>
 
                         <!-- Location & Distance Input -->
                         <div class="location-input-section">
-                            <h4>📍 Location & Distance Information</h4>
+                            <h4 data-translate="estimator_location_distance">📍 Location & Distance Information</h4>
                             <div class="location-form">
                                 <div class="form-group">
-                                    <label for="pickup-input">📍 Pickup Address:</label>
+                                    <label for="pickup-input" data-translate="estimator_pickup_address">📍 Pickup Address:</label>
                                     <div class="address-input-container">
                                         <input type="text" id="pickup-input" class="form-control"
                                             placeholder="Enter address (e.g., 123 Main St, Vancouver, BC or New York, NY)"
+                                            data-translate-placeholder="estimator_pickup_ph"
                                             required>
                                         <div id="pickup-suggestions" class="address-suggestions"></div>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="dropoff-input">🎯 Drop-off Address:</label>
+                                    <label for="dropoff-input" data-translate="estimator_dropoff_address">🎯 Drop-off Address:</label>
                                     <div class="address-input-container">
                                         <input type="text" id="dropoff-input" class="form-control"
                                             placeholder="Enter address (e.g., 456 Oak Ave, Calgary, AB or Boston, MA)"
+                                            data-translate-placeholder="estimator_pickup_ph"
                                             required>
                                         <div id="dropoff-suggestions" class="address-suggestions"></div>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="distance-display">📏 Distance:</label>
+                                    <label for="distance-display" data-translate="estimator_distance">📏 Distance:</label>
                                     <div id="distance-display" class="distance-display">
                                         <span id="distance-text">Select pickup and drop-off locations to calculate
                                             distance</span>
                                         <div id="distance-loader" class="distance-loader" style="display: none;">
                                             <div class="spinner"></div>
-                                            <span>Calculating distance...</span>
+                                            <span data-translate="estimator_calculating">Calculating distance...</span>
                                         </div>
                                     </div>
                                 </div>
-                                <button type="button" id="auto-calculate-btn" class="btn btn-primary" disabled>🔄
+                                <button type="button" id="auto-calculate-btn" class="btn btn-primary" disabled data-translate="estimator_auto_calculate">🔄
                                     Auto-Calculate Distance & Cost</button>
                             </div>
 
@@ -922,24 +924,24 @@
                             <div class="location-summary" id="location-summary" style="display: none;">
                                 <div class="location-info">
                                     <div class="location-item">
-                                        <strong>📍 Pickup:</strong> <span id="pickup-address">Not set</span>
+                                        <strong data-translate="estimator_pickup">📍 Pickup:</strong> <span id="pickup-address">Not set</span>
                                     </div>
                                     <div class="location-item">
-                                        <strong>🎯 Drop-off:</strong> <span id="dropoff-address">Not set</span>
+                                        <strong data-translate="estimator_dropoff">🎯 Drop-off:</strong> <span id="dropoff-address">Not set</span>
                                     </div>
                                     <div class="location-item">
-                                        <strong>📏 Distance:</strong> <span id="route-distance">0 miles</span>
+                                        <strong data-translate="estimator_distance">📏 Distance:</strong> <span id="route-distance">0 miles</span>
                                     </div>
                                 </div>
-                                <button type="button" id="edit-locations-btn" class="btn btn-secondary">✏️ Edit
+                                <button type="button" id="edit-locations-btn" class="btn btn-secondary" data-translate="estimator_edit_locations">✏️ Edit
                                     Locations</button>
                             </div>
                         </div>
 
                         <div id="cost-result" class="cost-result hidden">
-                            <strong>Total Estimated Cost: <span id="estimated-cost">$0</span></strong>
+                            <strong><span data-translate="estimator_total_cost">Total Estimated Cost</span>: <span id="estimated-cost">$0</span></strong>
                             <div id="cost-breakdown" class="cost-breakdown"></div>
-                            <p class="cost-disclaimer">*Professional estimate based on industry standards.</p>
+                            <p class="cost-disclaimer" data-translate="estimator_cost_disclaimer">*Professional estimate based on industry standards.</p>
                         </div>
                     </div>
                 </div>
@@ -971,9 +973,9 @@
                     <a href="interactive.html" data-translate="nav_estimator">Interactive Estimator</a>
                     <a href="../index.html#contact" data-translate="nav_contact">Contact</a>
                 </div>
-                <p data-translate="footer_copyright">© 2024 Muhtar Movers | North America's Trusted Moving Specialists
+                <p data-translate="footer_copy">© 2026 Muhtar Movers. Licensed and insured.
                 </p>
-                <p data-translate="footer_division">Licensed • Insured • Trusted</p>
+                <p data-translate="footer_owned">Women-owned · Canada &amp; USA</p>
                 <p class="footer-women-owned">
                     <img src="../visuals/WO.png" alt="Women Owned" class="wo-logo-footer">
                     <span data-translate="footer_women_owned">Proudly Women-Owned & Operated</span>
@@ -983,6 +985,7 @@
     </footer>
 
     <script src="script.js"></script>
+    <script src="../js/i18n.js"></script>
     <script src="../translations.js"></script>
     <script src="../language.js"></script>
 

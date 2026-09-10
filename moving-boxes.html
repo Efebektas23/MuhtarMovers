@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-    <title>The Ultimate Guide to Moving Boxes: Sizes, Tips & How Many You Need | Muhtar Movers</title>
+    <title data-translate-title="page_title_boxes">The Ultimate Guide to Moving Boxes: Sizes, Tips & How Many You Need | Muhtar Movers</title>
     <meta name="description" content="Learn how to choose the right moving boxes for your move. Our complete guide covers box types, sizes, and how to estimate the number of boxes you need. Expert tips from North America's trusted moving specialists.">
     <meta name="keywords" content="moving boxes, moving box sizes, packing boxes, moving supplies, how many boxes do I need, moving tips, packing tips, moving company, moving boxes guide">
 
@@ -157,7 +157,47 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 1rem;
         }
+
+        .lang-switch { position: relative; flex-shrink: 0; }
+        .lang-toggle {
+            min-width: 3.1rem;
+            height: 2.5rem;
+            border: 1px solid #e2e8f0;
+            background: #fff;
+            padding: 0 0.7rem;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            cursor: pointer;
+        }
+        .lang-menu {
+            position: absolute;
+            right: 0;
+            top: calc(100% + 0.35rem);
+            margin: 0;
+            padding: 0.35rem 0;
+            list-style: none;
+            min-width: 11rem;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+            z-index: 120;
+        }
+        .lang-menu button {
+            display: block;
+            width: 100%;
+            text-align: left;
+            border: 0;
+            background: transparent;
+            padding: 0.55rem 0.95rem;
+            font-size: 0.92rem;
+            cursor: pointer;
+        }
+        .lang-menu button:hover,
+        .lang-menu button.is-active { background: #f1f5f9; }
+        .header-tools { display: flex; align-items: center; gap: 0.75rem; }
 
         .logo {
             font-family: var(--font-display);
@@ -728,12 +768,29 @@
                 Muhtar Movers
             </a>
             <nav class="nav">
-                <a href="index.html#services">Services</a>
-                <a href="index.html#about">About</a>
-                <a href="moving-boxes.html">Moving Boxes</a>
-                <a href="game/interactive.html">Interactive Estimator</a>
-                <a href="index.html#contact">Contact</a>
+                <a href="index.html#services" data-translate="nav_services">Services</a>
+                <a href="index.html#about" data-translate="nav_about">About</a>
+                <a href="moving-boxes.html" data-translate="nav_boxes">Moving Boxes</a>
+                <a href="game/interactive.html" data-translate="nav_estimator">Interactive Estimator</a>
+                <a href="index.html#contact" data-translate="nav_contact">Contact</a>
             </nav>
+            <div class="header-tools">
+                <div class="lang-switch">
+                    <button type="button" class="lang-toggle" aria-expanded="false" aria-haspopup="listbox" data-translate-aria="lang_choose" aria-label="Choose language">
+                        <span class="lang-code">EN</span>
+                    </button>
+                    <ul class="lang-menu" hidden>
+                        <li><button type="button" data-lang="en">English</button></li>
+                        <li><button type="button" data-lang="fr">Français</button></li>
+                        <li><button type="button" data-lang="de">Deutsch</button></li>
+                        <li><button type="button" data-lang="es">Español</button></li>
+                        <li><button type="button" data-lang="it">Italiano</button></li>
+                        <li><button type="button" data-lang="ru">Русский</button></li>
+                        <li><button type="button" data-lang="tr">Türkçe</button></li>
+                        <li><button type="button" data-lang="zh">中文</button></li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </header>
 
@@ -741,10 +798,10 @@
     <section class="hero">
         <div class="container">
             <div class="hero-content">
-                <h1>The Ultimate Guide to Moving Boxes</h1>
+                <h1 data-translate="boxes_hero_title">The Ultimate Guide to Moving Boxes</h1>
                 <p class="hero-slogan">Who You Gonna Call?</p>
-                <p>A successful move starts with the right packing. This comprehensive guide will help you understand different box types, sizes, and how many you'll need for a stress-free move.</p>
-                <a href="game/interactive.html" class="btn btn-gold">Get Your Free Moving Quote</a>
+                <p data-translate="boxes_hero_lede">A successful move starts with the right packing. This comprehensive guide will help you understand different box types, sizes, and how many you'll need for a stress-free move.</p>
+                <a href="game/interactive.html" class="btn btn-gold" data-translate="boxes_cta_quote">Get Your Free Moving Quote</a>
             </div>
         </div>
     </section>
@@ -753,32 +810,32 @@
     <section class="box-types">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">Understanding Different Types of Moving Boxes</h2>
-                <p class="section-subtitle">Choose the right box for every item in your home</p>
+                <h2 class="section-title" data-translate="boxes_types_title">Understanding Different Types of Moving Boxes</h2>
+                <p class="section-subtitle" data-translate="boxes_types_sub">Choose the right box for every item in your home</p>
             </div>
             <div class="main-box-hero-image-wrapper">
                 <img src="visuals/boxes/all01.jpg" alt="All box types" class="main-box-hero-image">
             </div>
             <div class="box-type-cards">
                 <div class="box-type-card">
-                    <h3>Small Box (1.5 cu. ft.)</h3>
-                    <p><strong>Best for:</strong> Heavy items like books, tools, canned goods, records, or small, dense objects. The small size prevents you from making boxes too heavy to lift safely.</p>
-                    <p><em>Typical Dimensions: 16" x 12" x 12"</em></p>
+                    <h3 data-translate="boxes_small_title">Small Box (1.5 cu. ft.)</h3>
+                    <p data-translate="boxes_small_for"><strong>Best for:</strong> Heavy items like books, tools, canned goods, records, or small, dense objects. The small size prevents you from making boxes too heavy to lift safely.</p>
+                    <p><em data-translate="boxes_small_dim">Typical Dimensions: 16" x 12" x 12"</em></p>
                 </div>
                 <div class="box-type-card">
-                    <h3>Medium Box (3.0 cu. ft.)</h3>
-                    <p><strong>Best for:</strong> The most versatile option. Perfect for kitchenware, small appliances, toys, and most household items that aren't too heavy or too bulky.</p>
-                    <p><em>Typical Dimensions: 18" x 18" x 16"</em></p>
+                    <h3 data-translate="boxes_med_title">Medium Box (3.0 cu. ft.)</h3>
+                    <p data-translate="boxes_med_for"><strong>Best for:</strong> The most versatile option. Perfect for kitchenware, small appliances, toys, and most household items that aren't too heavy or too bulky.</p>
+                    <p><em data-translate="boxes_med_dim">Typical Dimensions: 18" x 18" x 16"</em></p>
                 </div>
                 <div class="box-type-card">
-                    <h3>Large Box (4.5 cu. ft.)</h3>
-                    <p><strong>Best for:</strong> Bulky, lightweight items including pillows, bedding, blankets, large stuffed animals, and lampshades. Avoid putting heavy items in large boxes.</p>
-                    <p><em>Typical Dimensions: 18" x 18" x 24"</em></p>
+                    <h3 data-translate="boxes_large_title">Large Box (4.5 cu. ft.)</h3>
+                    <p data-translate="boxes_large_for"><strong>Best for:</strong> Bulky, lightweight items including pillows, bedding, blankets, large stuffed animals, and lampshades. Avoid putting heavy items in large boxes.</p>
+                    <p><em data-translate="boxes_large_dim">Typical Dimensions: 18" x 18" x 24"</em></p>
                 </div>
                 <div class="box-type-card">
-                    <h3>Wardrobe Box</h3>
-                    <p><strong>Best for:</strong> Clothes on hangers. These tall boxes feature a metal bar, allowing you to move your closet without folding everything. It's a huge time-saver and prevents wrinkles.</p>
-                    <p><em>Typical Dimensions: 24" x 24" x 40"</em></p>
+                    <h3 data-translate="boxes_ward_title">Wardrobe Box</h3>
+                    <p data-translate="boxes_ward_for"><strong>Best for:</strong> Clothes on hangers. These tall boxes feature a metal bar, allowing you to move your closet without folding everything. It's a huge time-saver and prevents wrinkles.</p>
+                    <p><em data-translate="boxes_ward_dim">Typical Dimensions: 24" x 24" x 40"</em></p>
                 </div>
             </div>
         </div>
@@ -788,46 +845,46 @@
     <section class="calculator">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">How Many Boxes Do I Need?</h2>
-                <p class="section-subtitle">Use this chart as a starting point based on your home size</p>
+                <h2 class="section-title" data-translate="boxes_how_many_title">How Many Boxes Do I Need?</h2>
+                <p class="section-subtitle" data-translate="boxes_how_many_sub">Use this chart as a starting point based on your home size</p>
             </div>
             
             <table class="estimator-table">
                 <thead>
                     <tr>
-                        <th>Home Size</th>
-                        <th>Small Boxes</th>
-                        <th>Medium Boxes</th>
-                        <th>Large Boxes</th>
+                        <th data-translate="boxes_th_home">Home Size</th>
+                        <th data-translate="boxes_th_small">Small Boxes</th>
+                        <th data-translate="boxes_th_med">Medium Boxes</th>
+                        <th data-translate="boxes_th_large">Large Boxes</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td><strong>Studio / Dorm Room</strong></td>
+                        <td><strong data-translate="boxes_row_studio">Studio / Dorm Room</strong></td>
                         <td>5 - 10</td>
                         <td>10 - 15</td>
                         <td>3 - 5</td>
                     </tr>
                     <tr>
-                        <td><strong>1 Bedroom Apartment</strong></td>
+                        <td><strong data-translate="boxes_row_1bed">1 Bedroom Apartment</strong></td>
                         <td>10 - 15</td>
                         <td>15 - 25</td>
                         <td>5 - 10</td>
                     </tr>
                     <tr>
-                        <td><strong>2 Bedroom Home</strong></td>
+                        <td><strong data-translate="boxes_row_2bed">2 Bedroom Home</strong></td>
                         <td>15 - 25</td>
                         <td>30 - 40</td>
                         <td>10 - 15</td>
                     </tr>
                     <tr>
-                        <td><strong>3 Bedroom Home</strong></td>
+                        <td><strong data-translate="boxes_row_3bed">3 Bedroom Home</strong></td>
                         <td>25 - 35</td>
                         <td>40 - 50</td>
                         <td>15 - 20</td>
                     </tr>
                     <tr>
-                        <td><strong>4+ Bedroom Home</strong></td>
+                        <td><strong data-translate="boxes_row_4bed">4+ Bedroom Home</strong></td>
                         <td>35 - 50</td>
                         <td>50 - 70</td>
                         <td>20 - 30</td>
@@ -836,7 +893,7 @@
             </table>
             
             <div class="table-note">
-                <p><strong>Note:</strong> These are estimates. Your needs may vary depending on your lifestyle and how long you've lived in your home. It's always better to have a few extra boxes than to run out on moving day!</p>
+                <p data-translate="boxes_table_note"><strong>Note:</strong> These are estimates. Your needs may vary depending on your lifestyle and how long you've lived in your home. It's always better to have a few extra boxes than to run out on moving day!</p>
             </div>
         </div>
     </section>
@@ -845,34 +902,34 @@
     <section class="tips">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">Pro Packing Tips from Muhtar Movers</h2>
-                <p class="section-subtitle">Learn from North America's trusted moving specialists</p>
+                <h2 class="section-title" data-translate="boxes_tips_title">Pro Packing Tips from Muhtar Movers</h2>
+                <p class="section-subtitle" data-translate="boxes_tips_sub">Learn from North America's trusted moving specialists</p>
             </div>
             
             <div class="tips-grid">
                 <div class="tip-card">
-                    <h3>Heavy Items in Small Boxes</h3>
-                    <p>This is the golden rule of packing. It prevents boxes from becoming dangerously heavy and protects your back during the move.</p>
+                    <h3 data-translate="boxes_tip1_title">Heavy Items in Small Boxes</h3>
+                    <p data-translate="boxes_tip1_text">This is the golden rule of packing. It prevents boxes from becoming dangerously heavy and protects your back during the move.</p>
                 </div>
                 <div class="tip-card">
-                    <h3>Label Everything Clearly</h3>
-                    <p>Label the top and sides of each box with its contents and destination room (e.g., "KITCHEN - glasses and dishes").</p>
+                    <h3 data-translate="boxes_tip2_title">Label Everything Clearly</h3>
+                    <p data-translate="boxes_tip2_text">Label the top and sides of each box with its contents and destination room (e.g., "KITCHEN - glasses and dishes").</p>
                 </div>
                 <div class="tip-card">
-                    <h3>Don't Leave Empty Space</h3>
-                    <p>Fill gaps in boxes with packing paper, towels, or soft linens to prevent items from shifting and breaking during transit.</p>
+                    <h3 data-translate="boxes_tip3_title">Don't Leave Empty Space</h3>
+                    <p data-translate="boxes_tip3_text">Fill gaps in boxes with packing paper, towels, or soft linens to prevent items from shifting and breaking during transit.</p>
                 </div>
                 <div class="tip-card">
-                    <h3>Use Quality Packing Tape</h3>
-                    <p>Invest in strong packing tape. Tape the bottom and top seams, and add a couple of strips across for extra support.</p>
+                    <h3 data-translate="boxes_tip4_title">Use Quality Packing Tape</h3>
+                    <p data-translate="boxes_tip4_text">Invest in strong packing tape. Tape the bottom and top seams, and add a couple of strips across for extra support.</p>
                 </div>
                 <div class="tip-card">
-                    <h3>Pack a "First Night" Box</h3>
-                    <p>Keep one box with essentials you'll need immediately: toiletries, medications, a change of clothes, phone chargers, and basic tools.</p>
+                    <h3 data-translate="boxes_tip5_title">Pack a "First Night" Box</h3>
+                    <p data-translate="boxes_tip5_text">Keep one box with essentials you'll need immediately: toiletries, medications, a change of clothes, phone chargers, and basic tools.</p>
                 </div>
                 <div class="tip-card">
-                    <h3>Protect Your Valuables</h3>
-                    <p>Keep important documents, jewelry, and sentimental items with you. Never pack them in the moving truck.</p>
+                    <h3 data-translate="boxes_tip6_title">Protect Your Valuables</h3>
+                    <p data-translate="boxes_tip6_text">Keep important documents, jewelry, and sentimental items with you. Never pack them in the moving truck.</p>
                 </div>
             </div>
         </div>
@@ -882,42 +939,42 @@
     <section class="faq">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">Frequently Asked Questions</h2>
-                <p class="section-subtitle">Expert answers to common moving box questions</p>
+                <h2 class="section-title" data-translate="boxes_faq_title">Frequently Asked Questions</h2>
+                <p class="section-subtitle" data-translate="boxes_faq_sub">Expert answers to common moving box questions</p>
             </div>
             
             <div class="faq-item">
-                <div class="faq-question">What's the best way to tape a moving box?</div>
+                <div class="faq-question" data-translate="boxes_faq1_q">What's the best way to tape a moving box?</div>
                 <div class="faq-answer">
-                    <p>Use the "H-Tape" method. Tape down the main seam where the flaps meet in the middle, then tape along the two short side seams. This creates a strong 'H' shape and fully secures the bottom and top of the box.</p>
+                    <p data-translate="boxes_faq1_a">Use the "H-Tape" method. Tape down the main seam where the flaps meet in the middle, then tape along the two short side seams. This creates a strong 'H' shape and fully secures the bottom and top of the box.</p>
                 </div>
             </div>
             
             <div class="faq-item">
-                <div class="faq-question">Can I get free boxes from grocery or liquor stores?</div>
+                <div class="faq-question" data-translate="boxes_faq2_q">Can I get free boxes from grocery or liquor stores?</div>
                 <div class="faq-answer">
-                    <p>While possible, it's not always recommended. Used boxes may be structurally weak, have odd shapes, or carry contaminants from their previous contents. For the safety of your belongings, it's best to use proper moving boxes.</p>
+                    <p data-translate="boxes_faq2_a">While possible, it's not always recommended. Used boxes may be structurally weak, have odd shapes, or carry contaminants from their previous contents. For the safety of your belongings, it's best to use proper moving boxes.</p>
                 </div>
             </div>
             
             <div class="faq-item">
-                <div class="faq-question">How should I pack plates and fragile dishes?</div>
+                <div class="faq-question" data-translate="boxes_faq3_q">How should I pack plates and fragile dishes?</div>
                 <div class="faq-answer">
-                    <p>Use a medium box, often called a "Dish Pack" box if it comes with cell dividers. Wrap each plate in packing paper and stack them vertically (like records in a crate), not flat. They are much stronger this way. Fill all gaps with crumpled paper.</p>
+                    <p data-translate="boxes_faq3_a">Use a medium box, often called a "Dish Pack" box if it comes with cell dividers. Wrap each plate in packing paper and stack them vertically (like records in a crate), not flat. They are much stronger this way. Fill all gaps with crumpled paper.</p>
                 </div>
             </div>
             
             <div class="faq-item">
-                <div class="faq-question">How early should I start collecting boxes?</div>
+                <div class="faq-question" data-translate="boxes_faq4_q">How early should I start collecting boxes?</div>
                 <div class="faq-answer">
-                    <p>Start gathering boxes 6-8 weeks before your move. This gives you time to find the right sizes and quantities without rushing. Remember, different box types serve different purposes, so plan accordingly.</p>
+                    <p data-translate="boxes_faq4_a">Start gathering boxes 6-8 weeks before your move. This gives you time to find the right sizes and quantities without rushing. Remember, different box types serve different purposes, so plan accordingly.</p>
                 </div>
             </div>
             
             <div class="faq-item">
-                <div class="faq-question">What should I never pack in moving boxes?</div>
+                <div class="faq-question" data-translate="boxes_faq5_q">What should I never pack in moving boxes?</div>
                 <div class="faq-answer">
-                    <p>Never pack hazardous materials (paint, chemicals, propane), perishable food, important documents, jewelry, cash, or irreplaceable items. These should be transported separately or kept with you personally.</p>
+                    <p data-translate="boxes_faq5_a">Never pack hazardous materials (paint, chemicals, propane), perishable food, important documents, jewelry, cash, or irreplaceable items. These should be transported separately or kept with you personally.</p>
                 </div>
             </div>
         </div>
@@ -926,9 +983,9 @@
     <!-- CTA Section -->
     <section class="cta">
         <div class="container">
-            <h3>Ready to Make Your Move?</h3>
-            <p>Now that you know how to pack properly, let North America's trusted moving specialists handle the heavy lifting.</p>
-            <a href="game/interactive.html" class="btn btn-gold">Get Your Free Quote from Muhtar Movers</a>
+            <h3 data-translate="boxes_cta_title">Ready to Make Your Move?</h3>
+            <p data-translate="boxes_cta_text">Now that you know how to pack properly, let North America's trusted moving specialists handle the heavy lifting.</p>
+            <a href="game/interactive.html" class="btn btn-gold" data-translate="boxes_cta_button">Get Your Free Quote from Muhtar Movers</a>
         </div>
     </section>
 
@@ -937,17 +994,17 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-nav">
-                    <a href="index.html#services">Services</a>
-                    <a href="index.html#about">About</a>
-                    <a href="moving-boxes.html">Moving Boxes</a>
-                    <a href="game/interactive.html">Interactive Estimator</a>
-                    <a href="index.html#contact">Contact</a>
+                    <a href="index.html#services" data-translate="nav_services">Services</a>
+                    <a href="index.html#about" data-translate="nav_about">About</a>
+                    <a href="moving-boxes.html" data-translate="nav_boxes">Moving Boxes</a>
+                    <a href="game/interactive.html" data-translate="nav_estimator">Interactive Estimator</a>
+                    <a href="index.html#contact" data-translate="nav_contact">Contact</a>
                 </div>
-                <p>© 2024 Muhtar Movers | North America's Trusted Moving Specialists</p>
-                <p>Licensed • Insured • Trusted</p>
+                <p data-translate="footer_copy">© 2026 Muhtar Movers. Licensed and insured.</p>
+                <p data-translate="trust_licensed">Licensed • Insured • Trusted</p>
                 <p class="footer-women-owned">
                     <img src="visuals/WO.png" alt="Women Owned" class="wo-logo-footer">
-                    <span>Proudly Women-Owned & Operated</span>
+                    <span data-translate="footer_women_owned">Proudly Women-Owned & Operated</span>
                 </p>
             </div>
         </div>
@@ -994,5 +1051,7 @@
             });
         });
     </script>
+    <script src="js/i18n.js"></script>
+    <script src="language.js"></script>
 </body>
 </html> 

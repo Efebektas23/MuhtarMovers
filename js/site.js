@@ -8,6 +8,7 @@
     step: 1,
     started: false,
     completed: false,
+    sending: false,
     from: "",
     to: "",
     moveType: "",
@@ -21,6 +22,13 @@
   };
 
   var STEPS = 5;
+
+  function t(key, vars) {
+    if (window.MuhtarI18n && typeof window.MuhtarI18n.t === "function") {
+      return window.MuhtarI18n.t(key, vars);
+    }
+    return key;
+  }
 
   function $(sel, root) {
     return (root || document).querySelector(sel);
@@ -122,33 +130,33 @@
     readForm();
     if (state.step === 1) {
       if (!state.from.trim() || !state.to.trim()) {
-        setError("Please add both a starting city and a destination.");
+        setError(t("quote_err_route"));
         return false;
       }
     }
     if (state.step === 2 && !state.moveType) {
-      setError("Select the type of move so we can plan the right crew.");
+      setError(t("quote_err_type"));
       return false;
     }
     if (state.step === 3 && !state.moveSize) {
-      setError("Choose an approximate size. “Not sure” is fine.");
+      setError(t("quote_err_size"));
       return false;
     }
     if (state.step === 4 && !state.moveDate && !state.dateFlexible) {
-      setError("Add a date, or mark the date as flexible.");
+      setError(t("quote_err_date"));
       return false;
     }
     if (state.step === 5) {
       if (!state.name.trim()) {
-        setError("Please add your name.");
+        setError(t("quote_err_name"));
         return false;
       }
       if (!state.phone.trim()) {
-        setError("A phone number helps us send the quote quickly.");
+        setError(t("quote_err_phone"));
         return false;
       }
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(state.email.trim())) {
-        setError("Please add a valid email address.");
+        setError(t("quote_err_email"));
         return false;
       }
     }
@@ -168,7 +176,8 @@
     return document.getElementById(id);
   }
 
-  function renderStep() {
+  function renderStep(opts) {
+    opts = opts || {};
     $$(".quote-step").forEach(function (panel) {
       var active = Number(panel.getAttribute("data-step")) === state.step;
       panel.classList.toggle("hidden", !active);
@@ -176,21 +185,29 @@
       panel.setAttribute("aria-hidden", active ? "false" : "true");
     });
     var progress = el("quote-progress-label");
-    if (progress) progress.textContent = "Step " + state.step + " of " + STEPS;
+    if (progress) progress.textContent = t("quote_progress", { n: state.step, total: STEPS });
     var title = el("quote-title");
-    if (title) title.textContent = STEP_TITLES[state.step] || "Your moving quote";
+    if (title) title.textContent = t("quote_title_" + state.step) || STEP_TITLES[state.step] || "Your moving quote";
     var bar = el("quote-progress-bar");
     if (bar) bar.style.width = (state.step / STEPS) * 100 + "%";
     var back = el("quote-back");
     if (back) back.disabled = state.step === 1;
     var next = el("quote-next");
-    if (next) next.textContent = state.step === STEPS ? "Request my quote" : "Continue";
+    if (next) {
+      if (state.sending) {
+        next.disabled = true;
+        next.textContent = t("quote_sending");
+      } else {
+        next.disabled = false;
+        next.textContent = state.step === STEPS ? t("quote_request") : t("cta_continue");
+      }
+    }
     var formView = el("quote-form-view");
     var successView = el("quote-success-view");
     if (formView) formView.classList.toggle("hidden", state.completed);
     if (successView) successView.classList.toggle("hidden", !state.completed);
     var first = $(".quote-step:not(.hidden) input, .quote-step:not(.hidden) textarea, .quote-step:not(.hidden) .choice");
-    if (first && !state.completed) setTimeout(function () { first.focus(); }, 40);
+    if (first && !state.completed && !opts.skipFocus) setTimeout(function () { first.focus(); }, 40);
   }
 
   function nextStep() {
@@ -255,9 +272,10 @@
 
   function submitQuote() {
     var next = $("#quote-next");
+    state.sending = true;
     if (next) {
       next.disabled = true;
-      next.textContent = "Sending…";
+      next.textContent = t("quote_sending");
     }
     var data = payload();
 
@@ -278,12 +296,13 @@
 
   function finishSuccess(usedMailto) {
     state.completed = true;
+    state.sending = false;
     track("quote_form_completed", { method: usedMailto ? "mailto" : "form" });
-    renderStep();
+    renderStep({ skipFocus: true });
     var next = $("#quote-next");
     if (next) {
       next.disabled = false;
-      next.textContent = "Request my quote";
+      next.textContent = t("quote_request");
     }
   }
 
@@ -469,6 +488,9 @@
     initQuote();
     loadMaps();
     bindPlaces();
+    document.addEventListener("languageChanged", function () {
+      renderStep({ skipFocus: true });
+    });
   });
 
   window.MuhtarQuote = { open: openQuote, close: closeQuote, track: track };

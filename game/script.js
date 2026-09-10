@@ -31,6 +31,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     updateTruckDisplay();
     updateCapacityDisplay();
+    document.addEventListener('languageChanged', function () {
+        if (typeof updateCapacityDisplay === 'function') updateCapacityDisplay();
+    });
 });
 
 function initializeElements() {
@@ -727,6 +730,7 @@ function calculateBoxRequirements() {
 }
 
 function updateCapacityDisplay() {
+    if (!elements.capacityFill || !elements.capacityText) return;
     const truck = truckData[gameState.currentTruckIndex];
     const volumePercent = (gameState.totalVolume / truck.maxVolume) * 100;
     const weightPercent = (gameState.totalWeight / truck.maxWeight) * 100;
@@ -734,7 +738,9 @@ function updateCapacityDisplay() {
     const displayPercent = Math.min(maxPercent, 100);
 
     elements.capacityFill.style.width = `${displayPercent}%`;
-    elements.capacityText.textContent = `${Math.round(displayPercent)}% Full`;
+    elements.capacityText.textContent = (window.MuhtarI18n && MuhtarI18n.t)
+        ? MuhtarI18n.t("estimator_pct_full", { n: Math.round(displayPercent) })
+        : `${Math.round(displayPercent)}% Full`;
 
     // Update color based on capacity
     if (displayPercent < 60) {
