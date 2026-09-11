@@ -1833,56 +1833,56 @@ function clearAllItems() {
 // Touch support variables for mobile devices
 let touchItem = null;
 let touchOffset = { x: 0, y: 0 };
+let touchOrigin = { x: 0, y: 0 };
 let touchStartTime = 0;
 let touchMoved = false;
 
-// Global touch event handlers
 function handleTouchStart(e) {
     if (e.touches.length !== 1) return;
 
-    e.preventDefault();
     touchItem = e.currentTarget;
     touchStartTime = Date.now();
     touchMoved = false;
 
     const touch = e.touches[0];
     const rect = touchItem.getBoundingClientRect();
-
+    touchOrigin.x = touch.clientX;
+    touchOrigin.y = touch.clientY;
     touchOffset.x = touch.clientX - rect.left;
     touchOffset.y = touch.clientY - rect.top;
-
-    touchItem.classList.add('dragging');
-
-    // Create a visual clone for dragging
-    const clone = touchItem.cloneNode(true);
-    clone.classList.add('touch-clone');
-    clone.style.position = 'fixed';
-    clone.style.pointerEvents = 'none';
-    clone.style.zIndex = '9999';
-    clone.style.opacity = '0.8';
-    clone.style.transform = 'scale(1.1)';
-
-    document.body.appendChild(clone);
-
-    updateTouchClonePosition(clone, touch);
 
     document.addEventListener('touchmove', handleTouchMove, { passive: false });
     document.addEventListener('touchend', handleTouchEnd, { passive: false });
 }
 
+function ensureTouchClone(touch) {
+    if (!touchItem || document.querySelector('.touch-clone')) return;
+    touchItem.classList.add('dragging');
+    const clone = touchItem.cloneNode(true);
+    clone.className = 'item touch-clone';
+    clone.style.position = 'fixed';
+    clone.style.pointerEvents = 'none';
+    clone.style.zIndex = '9999';
+    clone.style.opacity = '0.9';
+    clone.style.width = touchItem.offsetWidth + 'px';
+    document.body.appendChild(clone);
+    updateTouchClonePosition(clone, touch);
+}
+
 function handleTouchMove(e) {
     if (!touchItem || e.touches.length !== 1) return;
 
+    const touch = e.touches[0];
+    const dist = Math.hypot(touch.clientX - touchOrigin.x, touch.clientY - touchOrigin.y);
+    if (dist < 14) return;
+
     e.preventDefault();
     touchMoved = true;
-    const touch = e.touches[0];
+    ensureTouchClone(touch);
+
     const clone = document.querySelector('.touch-clone');
+    if (clone) updateTouchClonePosition(clone, touch);
 
-    if (clone) {
-        updateTouchClonePosition(clone, touch);
-    }
-
-    // Check if over truck container
     const truckContainer = document.getElementById('truck-container');
     const truckVisual = document.getElementById('truck-visual');
 
@@ -1894,12 +1894,7 @@ function handleTouchMove(e) {
             touch.clientY >= truckRect.top &&
             touch.clientY <= truckRect.bottom
         );
-
-        if (isOverTruck) {
-            truckVisual.classList.add('drag-over');
-        } else {
-            truckVisual.classList.remove('drag-over');
-        }
+        truckVisual.classList.toggle('drag-over', isOverTruck);
     }
 }
 
@@ -1907,27 +1902,14 @@ function handleTouchEnd(e) {
     if (!touchItem) return;
 
     const clone = document.querySelector('.touch-clone');
-    if (clone) {
-        clone.remove();
-    }
+    if (clone) clone.remove();
 
-    const touchDuration = Date.now() - touchStartTime;
-
-    // If it was a quick tap without movement, treat as click
-    if (!touchMoved && touchDuration < 500) {
-        const itemIndex = parseInt(touchItem.dataset.itemIndex);
-        touchItem.classList.add('clicked');
-        setTimeout(() => {
-            if (touchItem) touchItem.classList.remove('clicked');
-        }, 200);
-        addItemToTruck(itemIndex);
-    } else {
-        // Handle as drag & drop
+    if (touchMoved) {
         const touch = e.changedTouches[0];
         const truckContainer = document.getElementById('truck-container');
         const truckVisual = document.getElementById('truck-visual');
 
-        if (truckContainer && truckVisual) {
+        if (truckContainer && truckVisual && touch) {
             const truckRect = truckContainer.getBoundingClientRect();
             const isOverTruck = (
                 touch.clientX >= truckRect.left &&
@@ -1937,8 +1919,7 @@ function handleTouchEnd(e) {
             );
 
             if (isOverTruck) {
-                const itemIndex = parseInt(touchItem.dataset.itemIndex);
-                addItemToTruck(itemIndex);
+                addItemToTruck(parseInt(touchItem.dataset.itemIndex, 10));
             }
 
             truckVisual.classList.remove('drag-over');
