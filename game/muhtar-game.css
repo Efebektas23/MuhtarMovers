@@ -22,12 +22,12 @@ body.page-game .footer {
 #app {
   max-width: 1240px;
   margin: 0 auto;
-  padding: 1.25rem 1.5rem 5rem;
+  padding: 0.75rem 1.5rem 2rem;
 }
 
 .play-intro {
-  max-width: 40rem;
-  margin: 1.5rem auto 2.25rem;
+  max-width: 38rem;
+  margin: 0.75rem auto 1.25rem;
   text-align: center;
 }
 
@@ -37,28 +37,29 @@ body.page-game .footer {
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: #6a7078;
-  margin-bottom: 0.85rem;
+  margin-bottom: 0.5rem;
 }
 
 .play-intro h1 {
   font-family: "Cormorant", Palatino, serif;
-  font-size: clamp(2.2rem, 5vw, 3.4rem);
+  font-size: clamp(1.85rem, 4vw, 2.6rem);
   font-weight: 500;
   letter-spacing: -0.03em;
   line-height: 1.08;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.45rem;
 }
 
 .play-intro p {
   color: #3a4048;
-  font-size: 1.05rem;
+  font-size: 0.98rem;
+  margin-bottom: 0;
 }
 
 .play-steps {
   display: flex;
   justify-content: center;
   gap: 0;
-  margin: 1.5rem auto 0;
+  margin: 1rem auto 0;
   padding: 0;
   list-style: none;
   max-width: 32rem;
@@ -67,18 +68,59 @@ body.page-game .footer {
 
 .play-steps li {
   flex: 1;
-  padding: 0.7rem 0.4rem;
+  padding: 0.55rem 0.4rem 0.5rem;
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: #6a7078;
   border-bottom: 2px solid transparent;
+  white-space: nowrap;
 }
 
 .play-steps li.is-on {
   color: #1a2d44;
   border-bottom-color: #1a2d44;
+}
+
+#app.is-loading {
+  padding-top: 0.35rem;
+  padding-bottom: 0.5rem;
+}
+
+#app.is-loading .play-intro {
+  display: none;
+}
+
+body.page-game.is-loading-truck .site-footer {
+  display: none;
+}
+
+.type-title {
+  font-family: "Cormorant", Palatino, serif;
+  font-weight: 500;
+  font-size: clamp(1.35rem, 2.6vw, 1.75rem);
+  color: #12151c !important;
+  text-align: center;
+  margin: 0 0 0.35rem;
+}
+
+.type-hint {
+  text-align: center;
+  color: #6a7078;
+  font-size: 0.92rem;
+  margin: 0 auto 1rem;
+  max-width: 32rem;
+}
+
+.move-type-btn {
+  height: 14rem !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  transform: none !important;
+  box-shadow: none !important;
+  background-size: cover !important;
+  background-position: center !important;
 }
 
 #move-type-selection,
@@ -89,11 +131,21 @@ body.page-game .footer {
   padding: 0 !important;
 }
 
+#game-interface {
+  flex-direction: column;
+  margin-bottom: 0 !important;
+}
+
+#game-interface.hidden {
+  display: none !important;
+}
+
 #move-type-selection h2 {
   font-family: "Cormorant", Palatino, serif;
   font-weight: 500;
-  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-size: clamp(1.35rem, 2.6vw, 1.75rem);
   color: #12151c !important;
+  margin-bottom: 0.35rem !important;
 }
 
 .move-type-buttons {
@@ -103,16 +155,6 @@ body.page-game .footer {
   background: rgba(18, 21, 28, 0.1);
   border: 1px solid rgba(18, 21, 28, 0.1);
   padding: 0 !important;
-}
-
-.move-type-btn {
-  height: 16rem !important;
-  border: 0 !important;
-  border-radius: 0 !important;
-  transform: none !important;
-  box-shadow: none !important;
-  background-size: cover !important;
-  background-position: center !important;
 }
 
 .move-type-btn:hover,
@@ -130,18 +172,56 @@ body.page-game .footer {
 
 .game-container {
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-  gap: 1.25rem;
-  align-items: start;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: 1rem;
+  align-items: stretch;
+  flex: 1;
+  min-height: 0;
+}
+
+.load-board {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100svh - 8.5rem);
+}
+
+@media (min-width: 901px) {
+  .load-board {
+    height: calc(100svh - 8.5rem);
+  }
+}
+
+.load-toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1rem;
+  min-height: 2.1rem;
+  margin-bottom: 0.75rem;
+}
+
+.load-hint {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #1a2d44;
+  font-weight: 600;
+}
+
+#change-type-btn {
+  justify-self: end;
 }
 
 .items-section,
 .truck-section {
   background: #faf8f4;
   border: 1px solid rgba(18, 21, 28, 0.1);
-  padding: 1.15rem 1.15rem 1.35rem;
+  padding: 0.85rem 0.95rem 1rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
+.items-section-head h3,
 .items-section h3,
 .truck-section h3 {
   font-family: "Manrope", sans-serif;
@@ -149,7 +229,106 @@ body.page-game .footer {
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: #6a7078;
-  margin-bottom: 1rem;
+  margin-bottom: 0.55rem;
+}
+
+.room-tabs {
+  display: flex;
+  gap: 0.35rem;
+  overflow-x: auto;
+  padding-bottom: 0.55rem;
+  margin-bottom: 0.35rem;
+  scrollbar-width: thin;
+}
+
+.room-tab {
+  flex: 0 0 auto;
+  border: 1px solid rgba(18, 21, 28, 0.14);
+  background: #fff;
+  padding: 0.4rem 0.7rem;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 650;
+  color: #3a4048;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.room-tab.is-on {
+  background: #1a2d44;
+  border-color: #1a2d44;
+  color: #faf8f4;
+}
+
+body.page-game .items-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(7.4rem, 1fr));
+  gap: 0.45rem !important;
+  flex: 1;
+  min-height: 12rem;
+  max-height: none !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  align-content: start;
+  align-items: start;
+  padding: 0.15rem !important;
+  border: 0 !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+}
+
+body.page-game .item {
+  padding: 0.55rem 0.4rem 0.5rem !important;
+  width: 100%;
+}
+
+body.page-game .item-icon {
+  height: 2.1rem !important;
+  margin-bottom: 0.2rem !important;
+}
+
+body.page-game .item-icon i {
+  height: auto;
+  font-size: 1.2rem !important;
+  margin-bottom: 0;
+  background: none !important;
+  -webkit-text-fill-color: #1a2d44 !important;
+  color: #1a2d44 !important;
+  filter: none !important;
+}
+
+body.page-game .item-name {
+  font-size: 0.78rem;
+}
+
+body.page-game .item-specs {
+  font-size: 0.62rem;
+}
+
+body.page-game .click-hint {
+  display: none !important;
+}
+
+.load-dock {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.85rem;
+  align-items: stretch;
+  margin-top: 0.85rem;
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  background: #f3f0ea;
+  padding: 0.65rem 0 calc(0.65rem + env(safe-area-inset-bottom));
+}
+
+.load-dock .stats-panel {
+  margin-top: 0;
+}
+
+.load-dock .controls {
+  margin-top: 0;
+  align-items: stretch;
 }
 
 .room-header {
@@ -199,6 +378,15 @@ body.page-game .footer {
   align-items: center;
   gap: 1rem;
   margin-bottom: 0.85rem;
+  padding: 0 !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+}
+
+.truck-container {
+  flex: 1;
+  min-height: 0;
+  display: flex;
 }
 
 .truck-type {
@@ -229,8 +417,9 @@ body.page-game .footer {
   background: #1a2d44 !important;
   border: 0 !important;
   border-radius: 0 !important;
-  min-height: 22rem !important;
-  padding: 1rem !important;
+  min-height: 0 !important;
+  flex: 1;
+  padding: 0.75rem !important;
   color: #faf8f4;
 }
 
@@ -246,7 +435,8 @@ body.page-game .footer {
 
 .truck-cargo {
   width: 100%;
-  min-height: 18rem;
+  min-height: 10rem;
+  height: 100%;
   display: flex;
   flex-wrap: wrap;
   align-content: flex-start;
@@ -257,8 +447,12 @@ body.page-game .footer {
   color: rgba(250, 247, 242, 0.55) !important;
   width: 100%;
   text-align: center;
-  padding: 4rem 1rem;
-  font-size: 0.95rem;
+  padding: 2.5rem 1rem;
+  font-size: 0.92rem;
+}
+
+.drop-zone-text::before {
+  display: none !important;
 }
 
 .loaded-item {
@@ -281,7 +475,7 @@ body.page-game .footer {
   gap: 1px;
   background: rgba(18, 21, 28, 0.1);
   border: 1px solid rgba(18, 21, 28, 0.1);
-  margin-top: 1.25rem;
+  margin-top: 0;
   box-shadow: none !important;
   border-radius: 0 !important;
   padding: 0 !important;
@@ -289,7 +483,7 @@ body.page-game .footer {
 
 .stat-item {
   background: #faf8f4;
-  padding: 1rem 1.1rem;
+  padding: 0.65rem 0.85rem;
   text-align: left !important;
 }
 
@@ -302,7 +496,7 @@ body.page-game .footer {
 
 .stat-value {
   font-family: "Cormorant", Palatino, serif;
-  font-size: 1.7rem;
+  font-size: 1.35rem;
   font-weight: 500;
   color: #12151c !important;
 }
@@ -310,7 +504,7 @@ body.page-game .footer {
 .controls {
   display: flex;
   gap: 0.75rem;
-  margin-top: 1.25rem;
+  margin-top: 0;
   justify-content: flex-end;
 }
 
@@ -475,22 +669,39 @@ body.page-game .modal-header h2 {
 @media (max-width: 900px) {
   .game-container,
   .move-type-buttons,
-  .stats-panel,
-  .share-form .field-row {
+  .share-form .field-row,
+  .load-dock {
     grid-template-columns: 1fr;
   }
 
-  .move-type-btn { height: 12rem !important; }
+  .move-type-btn { height: 10.5rem !important; }
 
-  .controls {
-    position: sticky;
-    bottom: 0;
-    background: #f3f0ea;
-    padding: 0.75rem 0 calc(0.75rem + env(safe-area-inset-bottom));
+  .load-board {
+    height: auto;
+    min-height: 0;
+  }
+
+  .load-toolbar {
+    grid-template-columns: 1fr auto;
+    gap: 0.35rem;
+  }
+
+  body.page-game .items-grid {
+    min-height: 14rem;
+    max-height: 22rem !important;
+  }
+
+  .truck-visual {
+    min-height: 12rem !important;
+  }
+
+  .load-dock .controls {
+    position: static;
+    padding: 0;
     justify-content: stretch;
   }
 
-  .controls .btn { flex: 1; }
+  .load-dock .controls .btn { flex: 1; }
 }
 
 body.page-game .modal-content.inv-sheet {

@@ -121,6 +121,9 @@ document.addEventListener('DOMContentLoaded', function () {
     updateCapacityDisplay();
     document.addEventListener('languageChanged', function () {
         if (typeof updateCapacityDisplay === 'function') updateCapacityDisplay();
+        if (gameState.currentMoveType && elements.gameInterface && !elements.gameInterface.classList.contains('hidden')) {
+            populateItems(gameState.currentMoveType);
+        }
     });
 });
 
@@ -156,25 +159,9 @@ function forceHideModal() {
 }
 
 function showInitialScreen() {
-    // Hide game interface
-    const gameInterface = document.getElementById('game-interface');
-    if (gameInterface) {
-        gameInterface.classList.add('hidden');
-        gameInterface.style.display = 'none';
-    }
-
-    // Show move type selection
-    const moveTypeSelection = document.getElementById('move-type-selection');
-    if (moveTypeSelection) {
-        moveTypeSelection.classList.remove('hidden');
-        moveTypeSelection.style.display = 'block';
-    }
-
-    // Hide notifications
+    showTypeWorkspace();
     const notification = document.getElementById('notification');
-    if (notification) {
-        notification.classList.add('hidden');
-    }
+    if (notification) notification.classList.add('hidden');
 }
 
 function setupEventListeners() {
@@ -197,6 +184,11 @@ function setupEventListeners() {
     }
     if (elements.resetBtn) {
         elements.resetBtn.addEventListener('click', resetGame);
+    }
+
+    const changeTypeBtn = document.getElementById('change-type-btn');
+    if (changeTypeBtn) {
+        changeTypeBtn.addEventListener('click', showTypeWorkspace);
     }
 
     // Modal events - check if elements exist
@@ -251,105 +243,181 @@ function setupEventListeners() {
     setupTouchSupport();
 }
 
+const ROOM_LABELS = {
+    livingRoom: { key: 'room_living', fallback: 'Living room' },
+    kitchen: { key: 'room_kitchen', fallback: 'Kitchen' },
+    bedroom: { key: 'room_bedroom', fallback: 'Bedroom' },
+    bathroom: { key: 'room_bathroom', fallback: 'Bathroom' },
+    homeOffice: { key: 'room_office', fallback: 'Home office' },
+    garage: { key: 'room_garage', fallback: 'Garage' },
+    storage: { key: 'room_storage', fallback: 'Storage and boxes' },
+    outdoor: { key: 'room_outdoor', fallback: 'Outdoor' },
+    specialItems: { key: 'room_special', fallback: 'Special items' }
+};
+
+let activeRoomKey = null;
+
+function setWorkspaceMode(mode) {
+    const app = document.getElementById('app');
+    if (app) app.classList.toggle('is-loading', mode === 'load');
+    document.body.classList.toggle('is-loading-truck', mode === 'load');
+}
+
+function showTypeWorkspace() {
+    setWorkspaceMode('type');
+
+    const gameInterface = document.getElementById('game-interface');
+    if (gameInterface) {
+        gameInterface.classList.add('hidden');
+        gameInterface.style.display = 'none';
+    }
+
+    const moveTypeSelection = document.getElementById('move-type-selection');
+    if (moveTypeSelection) {
+        moveTypeSelection.classList.remove('hidden');
+        moveTypeSelection.style.display = 'block';
+    }
+
+    setPlayStep('type');
+    window.scrollTo(0, 0);
+}
+
+function showLoadWorkspace() {
+    setWorkspaceMode('load');
+
+    const moveTypeSelection = document.getElementById('move-type-selection');
+    if (moveTypeSelection) {
+        moveTypeSelection.classList.add('hidden');
+        moveTypeSelection.style.display = 'none';
+    }
+
+    const gameInterface = document.getElementById('game-interface');
+    if (gameInterface) {
+        gameInterface.classList.remove('hidden');
+        gameInterface.style.display = 'flex';
+    }
+
+    setPlayStep('load');
+    window.scrollTo(0, 0);
+}
+
+function clearLoadedItems() {
+    gameState.loadedItems = [];
+    gameState.currentTruckIndex = 0;
+    gameState.totalVolume = 0;
+    gameState.totalWeight = 0;
+    gameState.itemCount = 0;
+    gameState.boxRequirements = [];
+    gameState.protectionRequirements = [];
+    gameState.specialHandlingFees = 0;
+
+    const truckCargo = document.getElementById('truck-cargo');
+    if (truckCargo) {
+        truckCargo.innerHTML = '<div class="drop-zone-text" data-translate="estimator_drop_zone">' +
+            gt('estimator_drop_zone', 'Tap an item on the left to add it here') + '</div>';
+    }
+
+    updateTruckDisplay();
+    updateStats();
+    updateCapacityDisplay();
+}
+
 function handleMoveTypeSelection(e) {
     const moveType = e.currentTarget.dataset.type;
-    gameState.currentMoveType = moveType;
 
-    // Update UI
+    if (gameState.currentMoveType && gameState.currentMoveType !== moveType && gameState.itemCount) {
+        clearLoadedItems();
+    }
+
+    gameState.currentMoveType = moveType;
+    if (moveType !== 'residential') activeRoomKey = null;
+
     document.querySelectorAll('.move-type-btn').forEach(btn => {
         btn.classList.remove('selected');
     });
     e.currentTarget.classList.add('selected');
 
-    // Show game interface after short delay
-    setTimeout(() => {
-        // Hide move type selection
-        const moveTypeSelection = document.getElementById('move-type-selection');
-        if (moveTypeSelection) {
-            moveTypeSelection.classList.add('hidden');
-            moveTypeSelection.style.display = 'none';
-        }
+    showLoadWorkspace();
+    populateItems(moveType);
+}
 
-        // Show game interface
-        const gameInterface = document.getElementById('game-interface');
-        if (gameInterface) {
-            gameInterface.classList.remove('hidden');
-            gameInterface.style.display = 'block';
-        }
-
-        populateItems(moveType);
-        setPlayStep('load');
-        showNotification(gt('estimator_type_selected', 'Move type selected. Load the bay.'), 'success');
-    }, 500);
+function renderCatalogItems(entries) {
+    if (!elements.itemsGrid) return;
+    elements.itemsGrid.innerHTML = '';
+    entries.forEach(function (entry) {
+        elements.itemsGrid.appendChild(createItemElement(entry.item, entry.index));
+    });
 }
 
 function populateItems(moveType) {
     if (!elements.itemsGrid) return;
 
+    const tabs = document.getElementById('room-tabs');
     elements.itemsGrid.innerHTML = '';
-    let itemIndex = 0;
+    if (tabs) {
+        tabs.innerHTML = '';
+        tabs.hidden = true;
+    }
 
     if (moveType === 'residential') {
-        const roomNames = {
-            livingRoom: { key: 'room_living', fallback: 'Living room' },
-            kitchen: { key: 'room_kitchen', fallback: 'Kitchen' },
-            bedroom: { key: 'room_bedroom', fallback: 'Bedroom' },
-            bathroom: { key: 'room_bathroom', fallback: 'Bathroom' },
-            homeOffice: { key: 'room_office', fallback: 'Home office' },
-            garage: { key: 'room_garage', fallback: 'Garage' },
-            storage: { key: 'room_storage', fallback: 'Storage and boxes' },
-            outdoor: { key: 'room_outdoor', fallback: 'Outdoor' },
-            specialItems: { key: 'room_special', fallback: 'Special items' }
-        };
+        const rooms = [];
+        let itemIndex = 0;
 
-        let firstRoom = true;
-        Object.keys(roomNames).forEach(roomKey => {
+        Object.keys(itemData.residential).forEach(function (roomKey) {
             const roomItems = itemData.residential[roomKey];
-            if (roomItems && roomItems.length > 0) {
-                const roomInfo = roomNames[roomKey];
-                const roomContainer = document.createElement('div');
-                roomContainer.className = 'room-container';
-
-                const roomHeader = document.createElement('div');
-                roomHeader.className = 'room-header';
-                const roomLabel = gt(roomInfo.key, roomInfo.fallback);
-                roomHeader.innerHTML = `<span class="room-name">${roomLabel}</span><span class="room-toggle">+</span>`;
-
-                const roomItemsContainer = document.createElement('div');
-                roomItemsContainer.className = 'room-items-container';
-                roomItemsContainer.style.display = firstRoom ? 'grid' : 'none';
-                if (firstRoom) {
-                    roomHeader.classList.add('active');
-                    roomHeader.querySelector('.room-toggle').textContent = '−';
-                    firstRoom = false;
-                }
-
-                roomItems.forEach(item => {
-                    const itemElement = createItemElement(item, itemIndex++);
-                    roomItemsContainer.appendChild(itemElement);
-                });
-
-                roomHeader.addEventListener('click', () => {
-                    const isHidden = roomItemsContainer.style.display === 'none';
-                    roomItemsContainer.style.display = isHidden ? 'grid' : 'none';
-                    roomHeader.querySelector('.room-toggle').textContent = isHidden ? '−' : '+';
-                    roomHeader.classList.toggle('active', isHidden);
-                });
-
-                roomContainer.appendChild(roomHeader);
-                roomContainer.appendChild(roomItemsContainer);
-                elements.itemsGrid.appendChild(roomContainer);
-            }
+            if (!roomItems || !roomItems.length) return;
+            const info = ROOM_LABELS[roomKey] || { key: roomKey, fallback: roomKey };
+            rooms.push({
+                key: roomKey,
+                info: info,
+                entries: roomItems.map(function (item) {
+                    return { item: item, index: itemIndex++ };
+                })
+            });
         });
-    } else {
-        const items = itemData[moveType];
-        if (items) {
-            items.forEach(item => {
-                const itemElement = createItemElement(item, itemIndex++);
-                elements.itemsGrid.appendChild(itemElement);
+
+        if (tabs) {
+            tabs.hidden = false;
+            rooms.forEach(function (room) {
+                const tab = document.createElement('button');
+                tab.type = 'button';
+                tab.className = 'room-tab';
+                tab.setAttribute('data-room', room.key);
+                tab.setAttribute('aria-pressed', 'false');
+                tab.textContent = gt(room.info.key, room.info.fallback);
+                tab.addEventListener('click', function () {
+                    activeRoomKey = room.key;
+                    renderCatalogItems(room.entries);
+                    tabs.querySelectorAll('.room-tab').forEach(function (t) {
+                        const on = t.getAttribute('data-room') === room.key;
+                        t.classList.toggle('is-on', on);
+                        t.setAttribute('aria-pressed', on ? 'true' : 'false');
+                    });
+                });
+                tabs.appendChild(tab);
             });
         }
+
+        const current = rooms.find(function (room) { return room.key === activeRoomKey; }) || rooms[0];
+        if (current) {
+            activeRoomKey = current.key;
+            if (tabs) {
+                tabs.querySelectorAll('.room-tab').forEach(function (t) {
+                    const on = t.getAttribute('data-room') === current.key;
+                    t.classList.toggle('is-on', on);
+                    t.setAttribute('aria-pressed', on ? 'true' : 'false');
+                });
+            }
+            renderCatalogItems(current.entries);
+        }
+        return;
     }
+
+    activeRoomKey = null;
+    const items = itemData[moveType] || [];
+    renderCatalogItems(items.map(function (item, index) {
+        return { item: item, index: index };
+    }));
 }
 
 // Function to toggle room accordion
@@ -1574,6 +1642,11 @@ function closeModal() {
         modal.style.display = 'none';
         modal.classList.add('hidden');
     }
+    const gameInterface = document.getElementById('game-interface');
+    if (gameInterface && !gameInterface.classList.contains('hidden')) {
+        setPlayStep('load');
+        setWorkspaceMode('load');
+    }
 }
 
 function resetGame() {
@@ -1595,18 +1668,8 @@ function resetGame() {
     // Force hide modal
     forceHideModal();
 
-    // Reset UI
-    const gameInterface = document.getElementById('game-interface');
-    if (gameInterface) {
-        gameInterface.classList.add('hidden');
-        gameInterface.style.display = 'none';
-    }
-
-    const moveTypeSelection = document.getElementById('move-type-selection');
-    if (moveTypeSelection) {
-        moveTypeSelection.classList.remove('hidden');
-        moveTypeSelection.style.display = 'block';
-    }
+    activeRoomKey = null;
+    showTypeWorkspace();
 
     const itemsGrid = document.getElementById('items-grid');
     if (itemsGrid) {

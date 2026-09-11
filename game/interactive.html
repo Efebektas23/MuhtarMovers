@@ -33,7 +33,7 @@
 
         .move-type-btn {
             position: relative;
-            height: 16rem;
+            height: 14rem;
             border: none;
             cursor: pointer;
             overflow: hidden;
@@ -153,7 +153,8 @@
 
         <!-- Move Type Selection -->
         <section id="move-type-selection" class="section">
-            <h2 data-translate="estimator_move_type_title">What type of move are you planning?</h2>
+            <h2 class="type-title" data-translate="estimator_move_type_title">What type of move are you planning?</h2>
+            <p class="type-hint" data-translate="estimator_type_hint">Start here. You will tap the pieces you own on the next screen.</p>
             <div class="move-type-buttons">
                 <button class="move-type-btn residential-card" data-type="residential">
                     <div class="card-overlay"></div>
@@ -184,58 +185,60 @@
 
         <!-- Main Game Interface -->
         <section id="game-interface" class="section hidden">
-            <div class="game-container">
-                <!-- Items Palette -->
-                <div class="items-section">
-                    <h3 data-translate="estimator_available_items">Available Items</h3>
-                    <div class="items-grid" id="items-grid">
-                        <!-- Items will be populated by JavaScript -->
-                    </div>
+            <div class="load-board">
+                <div class="load-toolbar">
+                    <p class="load-hint" data-translate="estimator_load_hint">Tap what you own. That list is what we quote from.</p>
+                    <button type="button" id="change-type-btn" class="btn-text" data-translate="estimator_change_type">Change type</button>
                 </div>
-
-                <!-- Truck Section -->
-                <div class="truck-section">
-                    <h3 data-translate="estimator_your_truck">Your Moving Truck</h3>
-                    <div class="truck-info">
-                        <div class="truck-type" id="truck-type">Panel Van</div>
-                        <div class="capacity-display">
-                            <div class="capacity-bar">
-                                <div class="capacity-fill" id="capacity-fill"></div>
-                                <div class="capacity-text" id="capacity-text">0% Full</div>
+                <div class="game-container">
+                    <div class="items-section">
+                        <div class="items-section-head">
+                            <h3 data-translate="estimator_choose_items">Choose items</h3>
+                        </div>
+                        <div class="room-tabs" id="room-tabs" hidden></div>
+                        <div class="items-grid" id="items-grid"></div>
+                    </div>
+                    <div class="truck-section">
+                        <h3 data-translate="estimator_your_truck">On the truck</h3>
+                        <div class="truck-info">
+                            <div class="truck-type" id="truck-type">Panel Van</div>
+                            <div class="capacity-display">
+                                <div class="capacity-bar">
+                                    <div class="capacity-fill" id="capacity-fill"></div>
+                                    <div class="capacity-text" id="capacity-text">0% Full</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="truck-container" id="truck-container">
+                            <div class="truck-visual" id="truck-visual">
+                                <div class="truck-icon"></div>
+                                <div class="truck-cargo" id="truck-cargo">
+                                    <div class="drop-zone-text" data-translate="estimator_drop_zone">Tap an item on the left to add it here</div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="truck-container" id="truck-container">
-                        <div class="truck-visual" id="truck-visual">
-                            <div class="truck-icon"></div>
-                            <div class="truck-cargo" id="truck-cargo">
-                                <div class="drop-zone-text" data-translate="estimator_drop_zone">Tap an item to load it into the bay</div>
-                            </div>
+                </div>
+                <div class="load-dock">
+                    <div class="stats-panel">
+                        <div class="stat-item">
+                            <div class="stat-label" data-translate="estimator_items_loaded">Items</div>
+                            <div class="stat-value" id="items-count">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label" data-translate="estimator_total_volume">Volume</div>
+                            <div class="stat-value" id="total-volume">0 m³</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label" data-translate="estimator_total_weight">Weight</div>
+                            <div class="stat-value" id="total-weight">0 lbs</div>
                         </div>
                     </div>
+                    <div class="controls">
+                        <button id="reset-btn" class="btn btn-secondary" data-translate="estimator_start_over">Start over</button>
+                        <button id="calculate-btn" class="btn btn-primary" data-translate="estimator_calculate_results">See my inventory</button>
+                    </div>
                 </div>
-            </div>
-
-            <!-- Stats Panel -->
-            <div class="stats-panel">
-                <div class="stat-item">
-                    <div class="stat-label" data-translate="estimator_total_volume">Total Volume</div>
-                    <div class="stat-value" id="total-volume">0 m³</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label" data-translate="estimator_total_weight">Total Weight</div>
-                    <div class="stat-value" id="total-weight">0 lbs</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label" data-translate="estimator_items_loaded">Items Loaded</div>
-                    <div class="stat-value" id="items-count">0</div>
-                </div>
-            </div>
-
-            <!-- Controls -->
-            <div class="controls">
-                    <button id="calculate-btn" class="btn btn-primary" data-translate="estimator_calculate_results">See my inventory</button>
-                    <button id="reset-btn" class="btn btn-secondary" data-translate="estimator_start_over">Start over</button>
             </div>
         </section>
 
