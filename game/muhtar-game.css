@@ -667,6 +667,10 @@ body.page-game .modal-header h2 {
 }
 
 @media (max-width: 900px) {
+  body.page-game .site-footer {
+    display: none !important;
+  }
+
   .game-container,
   .move-type-buttons,
   .share-form .field-row,
@@ -674,34 +678,298 @@ body.page-game .modal-header h2 {
     grid-template-columns: 1fr;
   }
 
-  .move-type-btn { height: 10.5rem !important; }
+  #app {
+    padding: 0.45rem 0.8rem 0.75rem;
+  }
+
+  body.page-game .header-inner {
+    height: 3.35rem;
+  }
+
+  .play-intro {
+    margin: 0.2rem auto 0.7rem;
+  }
+
+  .play-intro .eyebrow {
+    margin-bottom: 0.3rem;
+  }
+
+  .play-intro h1 {
+    font-size: 1.55rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .play-intro p {
+    font-size: 0.86rem;
+  }
+
+  .play-steps {
+    margin-top: 0.55rem;
+    max-width: none;
+  }
+
+  .play-steps li {
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    padding: 0.4rem 0.2rem 0.35rem;
+  }
+
+  .type-title,
+  #move-type-selection h2 {
+    font-size: 1.15rem !important;
+  }
+
+  .type-hint {
+    font-size: 0.82rem;
+    margin-bottom: 0.65rem;
+  }
+
+  .move-type-btn { height: 6.5rem !important; }
+
+  .move-type-btn .btn-text {
+    font-size: 1.4rem !important;
+  }
+
+  .move-type-btn .card-content {
+    padding: 0.85rem 1rem;
+  }
+
+  .load-toolbar {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.5rem;
+    min-height: 0;
+    margin-bottom: 0.5rem;
+    align-items: start;
+  }
+
+  .load-hint {
+    font-size: 0.82rem;
+    line-height: 1.3;
+  }
 
   .load-board {
     height: auto;
     min-height: 0;
   }
 
-  .load-toolbar {
-    grid-template-columns: 1fr auto;
-    gap: 0.35rem;
+  .game-container {
+    min-height: 0;
+  }
+
+  .items-section,
+  .truck-section {
+    padding: 0.55rem 0.65rem 0.6rem;
+  }
+
+  .items-section-head h3,
+  .items-section h3,
+  .truck-section h3 {
+    margin-bottom: 0.35rem;
+  }
+
+  .room-tabs {
+    padding-bottom: 0.4rem;
+    margin-bottom: 0.2rem;
+    gap: 0.28rem;
+  }
+
+  .room-tab {
+    padding: 0.32rem 0.55rem;
+    font-size: 0.72rem;
   }
 
   body.page-game .items-grid {
-    min-height: 14rem;
-    max-height: 22rem !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    grid-template-columns: repeat(auto-fill, minmax(6.4rem, 1fr));
+    gap: 0.35rem !important;
+  }
+
+  body.page-game .item {
+    min-height: 0 !important;
+    padding: 0.45rem 0.3rem 0.4rem !important;
+  }
+
+  body.page-game .item-icon {
+    height: 1.7rem !important;
+    margin-bottom: 0.12rem !important;
+  }
+
+  body.page-game .item-name {
+    font-size: 0.72rem;
+  }
+
+  body.page-game .item-specs {
+    font-size: 0.58rem;
+  }
+
+  body.page-game .add-btn {
+    width: 1.35rem !important;
+    height: 1.35rem !important;
+    font-size: 0.8rem !important;
+    top: 0.18rem !important;
+    right: 0.18rem !important;
+    opacity: 1 !important;
+    transform: none !important;
+    border-radius: 0 !important;
+  }
+
+  .truck-info {
+    margin-bottom: 0.45rem;
+    gap: 0.5rem;
+  }
+
+  .truck-type {
+    font-size: 1.15rem;
+  }
+
+  .capacity-display {
+    margin-left: 0 !important;
   }
 
   .truck-visual {
-    min-height: 12rem !important;
+    min-height: 4.4rem !important;
+    max-height: 6.2rem;
+    padding: 0.45rem !important;
+  }
+
+  .truck-cargo {
+    min-height: 0;
+    max-height: 5.4rem;
+    overflow: auto;
+  }
+
+  .drop-zone-text {
+    padding: 0.55rem 0.4rem;
+    font-size: 0.8rem;
+  }
+
+  .loaded-item {
+    min-width: 0;
+    padding: 0.32rem 0.4rem !important;
+  }
+
+  .load-dock {
+    margin-top: 0.45rem;
+    gap: 0.45rem;
+    padding: 0.4rem 0 calc(0.45rem + env(safe-area-inset-bottom));
+    position: relative;
+  }
+
+  .stat-item {
+    padding: 0.4rem 0.5rem;
+  }
+
+  .stat-value {
+    font-size: 1.05rem;
   }
 
   .load-dock .controls {
     position: static;
     padding: 0;
     justify-content: stretch;
+    gap: 0.45rem;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
   }
 
-  .load-dock .controls .btn { flex: 1; }
+  .load-dock .controls .btn {
+    flex: 1;
+    min-width: 0 !important;
+    padding: 0.75rem 0.6rem;
+    font-size: 0.68rem;
+  }
+
+  body.page-game .items-section h3,
+  body.page-game .truck-section h3 {
+    background: transparent !important;
+    border: 0 !important;
+    padding: 0 !important;
+    text-align: left !important;
+    font-size: 0.68rem !important;
+  }
+}
+
+@media (max-width: 700px) {
+  body.page-game.is-loading-truck {
+    display: flex;
+    flex-direction: column;
+    height: 100svh;
+    height: 100dvh;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  body.page-game.is-loading-truck .site-header {
+    flex-shrink: 0;
+  }
+
+  body.page-game.is-loading-truck #app {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 0.35rem 0.7rem 0;
+    overflow: hidden;
+  }
+
+  body.page-game.is-loading-truck #game-interface {
+    display: flex !important;
+    flex: 1;
+    min-height: 0;
+    flex-direction: column;
+  }
+
+  body.page-game.is-loading-truck .load-board {
+    height: auto;
+    min-height: 0;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  body.page-game.is-loading-truck .game-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    gap: 0.45rem;
+  }
+
+  body.page-game.is-loading-truck .items-section {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  body.page-game.is-loading-truck .truck-section {
+    flex: 0 0 auto;
+  }
+
+  body.page-game.is-loading-truck .truck-section > h3 {
+    display: none;
+  }
+
+  body.page-game.is-loading-truck .load-dock {
+    flex-shrink: 0;
+  }
+
+  body.page-game.is-loading-truck #app,
+  body.page-game.is-loading-truck .load-board,
+  body.page-game.is-loading-truck .game-container,
+  body.page-game.is-loading-truck .items-section,
+  body.page-game.is-loading-truck .truck-section,
+  body.page-game.is-loading-truck .load-dock {
+    max-width: 100%;
+  }
+
+  .truck-visual {
+    min-height: 3.8rem !important;
+    max-height: 5.2rem;
+  }
+
+  .truck-info {
+    margin-bottom: 0.35rem;
+  }
 }
 
 body.page-game .modal-content.inv-sheet {
