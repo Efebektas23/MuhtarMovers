@@ -159,11 +159,13 @@
                 <form class="route-card" id="hero-route">
                     <div class="route-field">
                         <label for="hero-from" data-translate="hero_from">From</label>
-                        <input id="hero-from" name="from" type="text" autocomplete="address-level2" placeholder="City or postal code" data-translate-placeholder="hero_from_ph" required>
+                        <input id="hero-from" name="from" type="text" autocomplete="street-address" placeholder="Street, city or postal code" data-translate-placeholder="hero_from_ph" required>
+                        <div id="hero-from-suggestions" class="address-suggestions"></div>
                     </div>
                     <div class="route-field">
                         <label for="hero-to" data-translate="hero_to">To</label>
-                        <input id="hero-to" name="to" type="text" autocomplete="address-level2" placeholder="City or postal code" data-translate-placeholder="hero_from_ph" required>
+                        <input id="hero-to" name="to" type="text" autocomplete="street-address" placeholder="Street, city or postal code" data-translate-placeholder="hero_from_ph" required>
+                        <div id="hero-to-suggestions" class="address-suggestions"></div>
                     </div>
                     <button class="btn btn-primary" type="submit" data-translate="cta_continue">Continue</button>
                 </form>
@@ -246,7 +248,7 @@
                 <figure class="why-photo film reveal">
                     <div class="film-frame">
                         <video class="js-film" muted loop playsinline preload="none" poster="visuals/opt/video/care-poster.jpg" data-src="visuals/opt/video/care.mp4" disablepictureinpicture aria-hidden="true"></video>
-                        <img class="film-fallback" src="visuals/opt/video/care-poster.jpg" width="1280" height="664" alt="Hands wrapping a fragile lamp in tissue paper" data-translate-alt="why_photo_alt" loading="lazy">
+                        <img class="film-fallback" src="visuals/opt/video/care-poster.jpg" width="1280" height="720" alt="A Muhtar crew member wrapping a dish in tissue paper" data-translate-alt="why_photo_alt" loading="lazy">
                     </div>
                     <figcaption data-translate="why_caption">Protection is the job — not an add-on.</figcaption>
                 </figure>
@@ -594,14 +596,16 @@
                 <div class="progress-track" aria-hidden="true"><span id="quote-progress-bar"></span></div>
                 <div class="quote-body">
                     <div class="quote-step" data-step="1">
-                        <p class="why-ask" data-translate="quote_why_1">Your route tells us crew, vehicle and whether this is a local, long-distance or cross-border move.</p>
+                        <p class="why-ask" data-translate="quote_why_1">A full pickup and delivery address tells us crew, vehicle and whether this is a local, long-distance or cross-border move.</p>
                         <div class="field">
                             <label for="quote-from" data-translate="quote_from">From</label>
-                            <input id="quote-from" type="text" autocomplete="address-level2" placeholder="City, province or state" data-translate-placeholder="quote_city_ph">
+                            <input id="quote-from" type="text" autocomplete="street-address" placeholder="Street address, city, province or state" data-translate-placeholder="quote_city_ph">
+                            <div id="quote-from-suggestions" class="address-suggestions"></div>
                         </div>
                         <div class="field">
                             <label for="quote-to" data-translate="quote_to">To</label>
-                            <input id="quote-to" type="text" autocomplete="address-level2" placeholder="City, province or state" data-translate-placeholder="quote_city_ph">
+                            <input id="quote-to" type="text" autocomplete="street-address" placeholder="Street address, city, province or state" data-translate-placeholder="quote_city_ph">
+                            <div id="quote-to-suggestions" class="address-suggestions"></div>
                         </div>
                     </div>
                     <div class="quote-step hidden" data-step="2" hidden aria-hidden="true">
@@ -680,6 +684,7 @@
     </dialog>
 
     <script src="js/lead-mail.js"></script>
+    <script src="js/address-search.js"></script>
     <script src="js/i18n.js"></script>
     <script src="language.js"></script>
     <script src="js/site.js"></script>

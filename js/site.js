@@ -10,6 +10,10 @@
     sending: false,
     from: "",
     to: "",
+    fromLat: "",
+    fromLng: "",
+    toLat: "",
+    toLng: "",
     moveType: "",
     moveSize: "",
     moveDate: "",
@@ -57,6 +61,10 @@
     state.step = 1;
     state.from = "";
     state.to = "";
+    state.fromLat = "";
+    state.fromLng = "";
+    state.toLat = "";
+    state.toLng = "";
     state.moveType = "";
     state.moveSize = "";
     state.moveDate = "";
@@ -268,6 +276,10 @@
       email: state.email,
       moving_from: state.from,
       moving_to: state.to,
+      pickup_lat: state.fromLat || "",
+      pickup_lng: state.fromLng || "",
+      dropoff_lat: state.toLat || "",
+      dropoff_lng: state.toLng || "",
       move_type: state.moveType,
       move_size: state.moveSize,
       move_date: state.dateFlexible && !state.moveDate ? "Flexible" : state.moveDate,
@@ -283,6 +295,8 @@
       "",
       "From: " + state.from,
       "To: " + state.to,
+      "Pickup coords: " + (state.fromLat && state.fromLng ? state.fromLat + ", " + state.fromLng : "(not set)"),
+      "Drop-off coords: " + (state.toLat && state.toLng ? state.toLat + ", " + state.toLng : "(not set)"),
       "Type: " + state.moveType,
       "Size: " + state.moveSize,
       "Date: " + (state.dateFlexible && !state.moveDate ? "Flexible" : state.moveDate),
@@ -392,28 +406,46 @@
   }
 
   function bindPlaces() {
-    if (!window.google || !window.google.maps || !window.google.maps.places) return;
-    ["hero-from", "hero-to", "quote-from", "quote-to"].forEach(function (id) {
+    var binder = window.MuhtarAddressSearch && window.MuhtarAddressSearch.bind;
+    if (typeof binder !== "function") return;
+
+    function attach(id, side) {
       var input = document.getElementById(id);
       if (!input || input.dataset.placesBound) return;
-      try {
-        var ac = new google.maps.places.Autocomplete(input, {
-          types: ["(cities)"],
-          componentRestrictions: { country: ["us", "ca"] },
-          fields: ["formatted_address", "name"]
-        });
-        ac.addListener("place_changed", function () {
-          var place = ac.getPlace();
-          var value = (place && (place.formatted_address || place.name)) || input.value;
-          input.value = value;
-          if (id === "hero-from" || id === "quote-from") state.from = value;
-          if (id === "hero-to" || id === "quote-to") state.to = value;
-        });
-        input.dataset.placesBound = "1";
-      } catch (err) {
-        console.warn("Places autocomplete unavailable", err);
-      }
-    });
+      var box = document.getElementById(id + "-suggestions");
+      binder(input, {
+        suggestionsEl: box,
+        types: ["geocode"],
+        onSelect: function (place) {
+          var address = place.formattedAddress || input.value;
+          input.value = address;
+          if (side === "from") {
+            state.from = address;
+            state.fromLat = place.location ? String(place.location.lat) : "";
+            state.fromLng = place.location ? String(place.location.lng) : "";
+          } else {
+            state.to = address;
+            state.toLat = place.location ? String(place.location.lat) : "";
+            state.toLng = place.location ? String(place.location.lng) : "";
+          }
+        },
+        onInput: function () {
+          if (side === "from") {
+            state.fromLat = "";
+            state.fromLng = "";
+          } else {
+            state.toLat = "";
+            state.toLng = "";
+          }
+        }
+      });
+      input.dataset.placesBound = "1";
+    }
+
+    attach("hero-from", "from");
+    attach("hero-to", "to");
+    attach("quote-from", "from");
+    attach("quote-to", "to");
   }
 
   window.initMap = bindPlaces;
@@ -473,7 +505,15 @@
       }
     }
 
+    function silence(video) {
+      video.muted = true;
+      video.defaultMuted = true;
+      video.volume = 0;
+      video.setAttribute("muted", "");
+    }
+
     function tryPlay(video) {
+      silence(video);
       loadSrc(video);
       var play = video.play();
       if (play && play.then) {
@@ -484,6 +524,10 @@
     }
 
     films.forEach(function (video) {
+      silence(video);
+      video.addEventListener("volumechange", function () {
+        if (!video.muted || video.volume) silence(video);
+      });
       if (reduced) {
         video.removeAttribute("autoplay");
         video.pause();

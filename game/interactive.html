@@ -241,183 +241,198 @@
 
         <!-- Results Modal -->
         <div id="results-modal" class="modal hidden">
-            <div class="modal-content">
+            <div class="modal-content inv-sheet">
                 <div class="modal-header">
-                    <h2 data-translate="estimator_moving_summary">Your inventory</h2>
-                    <button class="close-btn" id="close-modal">&times;</button>
+                    <div class="inv-heading">
+                        <h2 data-translate="estimator_moving_summary">Your inventory</h2>
+                        <nav class="inv-steps" aria-label="Inventory steps">
+                            <button type="button" class="inv-step-tab is-active" data-inv-tab="1"><span>1</span> <em data-translate="estimator_inv_review">Review</em></button>
+                            <button type="button" class="inv-step-tab" data-inv-tab="2"><span>2</span> <em data-translate="estimator_inv_route">Route</em></button>
+                            <button type="button" class="inv-step-tab" data-inv-tab="3"><span>3</span> <em data-translate="estimator_inv_send">Send</em></button>
+                        </nav>
+                    </div>
+                    <button class="close-btn" id="close-modal" type="button" aria-label="Close">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <div class="result-item">
-                        <strong data-translate="estimator_recommended_truck">Recommended Truck:</strong>
-                        <span id="final-truck-type">Panel Van</span>
-                    </div>
-                    <div class="result-item">
-                        <strong data-translate="estimator_total_volume">Total Volume:</strong>
-                        <span id="final-volume">0 m³</span>
-                    </div>
-                    <div class="result-item">
-                        <strong data-translate="estimator_total_weight">Total Weight:</strong>
-                        <span id="final-weight">0 lbs</span>
-                    </div>
-                    <div class="result-item">
-                        <strong data-translate="estimator_items_count">Items Count:</strong>
-                        <span id="final-items">0</span>
-                    </div>
-
-                    <!-- Loaded Items List -->
-                    <div class="loaded-items-section">
-                        <h3 data-translate="estimator_your_items">Loaded items</h3>
-                        <div id="loaded-items-list" class="loaded-items-list"></div>
-                        <div class="items-actions">
-                            <button id="add-more-items" class="btn btn-secondary" data-translate="estimator_add_more">Add more items</button>
-                            <button id="clear-all-items" class="btn btn-warning" data-translate="estimator_clear_all">Clear all</button>
+                    <div class="inv-panel is-active" data-inv-panel="1">
+                        <div class="inv-stats">
+                            <div class="inv-stat">
+                                <span data-translate="estimator_recommended_truck">Recommended truck</span>
+                                <strong id="final-truck-type">Panel Van</strong>
+                            </div>
+                            <div class="inv-stat">
+                                <span data-translate="estimator_items_count">Items</span>
+                                <strong id="final-items">0</strong>
+                            </div>
+                            <div class="inv-stat">
+                                <span data-translate="estimator_total_volume">Volume</span>
+                                <strong id="final-volume">0 m³</strong>
+                            </div>
+                            <div class="inv-stat">
+                                <span data-translate="estimator_total_weight">Weight</span>
+                                <strong id="final-weight">0 lbs</strong>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Packing Service Selection -->
-                    <div class="packing-section">
-                        <h3 data-translate="estimator_packing_service">Packing service</h3>
-                        <div class="packing-options">
-                            <label class="packing-option">
-                                <input type="radio" name="packing" value="self" checked
-                                    onchange="updatePackingOption(this.value)">
-                                <div class="option-content">
-                                    <span class="option-title" data-translate="estimator_self_packing">Self packing</span>
-                                    <span class="option-desc" data-translate="estimator_self_packing_desc">You pack your own items</span>
-                                    <span class="option-price" data-translate="estimator_no_extra_cost">No extra cost</span>
+                        <div class="loaded-items-section">
+                            <div class="inv-section-head">
+                                <h3 data-translate="estimator_your_items">Loaded items</h3>
+                                <div class="items-actions">
+                                    <button type="button" id="add-more-items" class="btn-text" data-translate="estimator_add_more">Add more</button>
+                                    <button type="button" id="clear-all-items" class="btn-text danger" data-translate="estimator_clear_all">Clear all</button>
                                 </div>
-                            </label>
-                            <label class="packing-option">
-                                <input type="radio" name="packing" value="partial"
-                                    onchange="updatePackingOption(this.value)">
-                                <div class="option-content">
-                                    <span class="option-title" data-translate="estimator_partial_packing">Partial packing</span>
-                                    <span class="option-desc" data-translate="estimator_partial_packing_desc">We pack fragile and valuable items</span>
-                                    <span class="option-price" data-translate="estimator_partial_cost">+25% service cost</span>
-                                </div>
-                            </label>
-                            <label class="packing-option">
-                                <input type="radio" name="packing" value="full"
-                                    onchange="updatePackingOption(this.value)">
-                                <div class="option-content">
-                                    <span class="option-title" data-translate="estimator_full_service">Full service</span>
-                                    <span class="option-desc" data-translate="estimator_full_service_desc">We pack everything for you</span>
-                                    <span class="option-price" data-translate="estimator_full_cost">+60% service cost</span>
-                                </div>
-                            </label>
+                            </div>
+                            <div id="loaded-items-list" class="loaded-items-list"></div>
                         </div>
+
+                        <div class="packing-section">
+                            <h3 data-translate="estimator_packing_service">Packing service</h3>
+                            <div class="packing-options">
+                                <label class="packing-option">
+                                    <input type="radio" name="packing" value="self" checked
+                                        onchange="updatePackingOption(this.value)">
+                                    <div class="option-content">
+                                        <span class="option-title" data-translate="estimator_self_packing">Self packing</span>
+                                        <span class="option-desc" data-translate="estimator_self_packing_desc">You pack your own items</span>
+                                        <span class="option-price" data-translate="estimator_no_extra_cost">No extra cost</span>
+                                    </div>
+                                </label>
+                                <label class="packing-option">
+                                    <input type="radio" name="packing" value="partial"
+                                        onchange="updatePackingOption(this.value)">
+                                    <div class="option-content">
+                                        <span class="option-title" data-translate="estimator_partial_packing">Partial packing</span>
+                                        <span class="option-desc" data-translate="estimator_partial_packing_desc">We pack fragile and valuable items</span>
+                                        <span class="option-price" data-translate="estimator_partial_cost">+25% service cost</span>
+                                    </div>
+                                </label>
+                                <label class="packing-option">
+                                    <input type="radio" name="packing" value="full"
+                                        onchange="updatePackingOption(this.value)">
+                                    <div class="option-content">
+                                        <span class="option-title" data-translate="estimator_full_service">Full service</span>
+                                        <span class="option-desc" data-translate="estimator_full_service_desc">We pack everything for you</span>
+                                        <span class="option-price" data-translate="estimator_full_cost">+60% service cost</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <details class="inv-materials">
+                            <summary data-translate="estimator_materials_summary">Suggested packing materials</summary>
+                            <div class="box-requirements">
+                                <div id="box-list" class="box-list"></div>
+                            </div>
+                        </details>
                     </div>
 
-                    <!-- Box Requirements -->
-                    <div class="box-requirements">
-                        <h3 data-translate="estimator_packing_materials">Packing materials and special handling</h3>
-                        <div id="box-list" class="box-list"></div>
-                    </div>
+                    <div class="inv-panel" data-inv-panel="2" hidden>
+                        <div class="cost-section">
+                            <h3 data-translate="estimator_location_distance">Pickup and delivery</h3>
+                            <p class="range-note" data-translate="estimator_route_hint">Enter a full street address — the same search as Calculate distance.</p>
 
-                    <div class="cost-section">
-                        <h3 data-translate="estimator_cost_estimation">Planning range</h3>
-                        <p class="range-note" data-translate="estimator_range_note">This range is a planning aid only. Your quote comes from the inventory you send — a coordinator confirms access, packing and route.</p>
-
-                        <!-- Location & Distance Input -->
-                        <div class="location-input-section">
-                            <h4 data-translate="estimator_location_distance">Pickup and delivery</h4>
-                            <div class="location-form">
-                                <div class="form-group">
-                                    <label for="pickup-input" data-translate="estimator_pickup_address">Pickup address</label>
-                                    <div class="address-input-container">
-                                        <input type="text" id="pickup-input" class="form-control"
-                                            placeholder="Enter address (e.g., 123 Main St, Vancouver, BC or New York, NY)"
-                                            data-translate-placeholder="estimator_pickup_ph"
-                                            required>
-                                        <div id="pickup-suggestions" class="address-suggestions"></div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="dropoff-input" data-translate="estimator_dropoff_address">Drop-off address</label>
-                                    <div class="address-input-container">
-                                        <input type="text" id="dropoff-input" class="form-control"
-                                            placeholder="Enter address (e.g., 456 Oak Ave, Calgary, AB or Boston, MA)"
-                                            data-translate-placeholder="estimator_pickup_ph"
-                                            required>
-                                        <div id="dropoff-suggestions" class="address-suggestions"></div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="distance-display" data-translate="estimator_distance">Distance</label>
-                                    <div id="distance-display" class="distance-display">
-                                        <span id="distance-text">Select pickup and drop-off locations to calculate
-                                            distance</span>
-                                        <div id="distance-loader" class="distance-loader" style="display: none;">
-                                            <div class="spinner"></div>
-                                            <span data-translate="estimator_calculating">Calculating distance...</span>
+                            <div class="location-input-section">
+                                <div class="location-form">
+                                    <div class="form-group">
+                                        <label for="pickup-input" data-translate="estimator_pickup_address">Pickup address</label>
+                                        <div class="address-input-container">
+                                            <input type="text" id="pickup-input" class="form-control"
+                                                autocomplete="street-address"
+                                                placeholder="Street address, city or postal code"
+                                                data-translate-placeholder="estimator_pickup_ph">
+                                            <div id="pickup-suggestions" class="address-suggestions"></div>
                                         </div>
                                     </div>
+                                    <div class="form-group">
+                                        <label for="dropoff-input" data-translate="estimator_dropoff_address">Drop-off address</label>
+                                        <div class="address-input-container">
+                                            <input type="text" id="dropoff-input" class="form-control"
+                                                autocomplete="street-address"
+                                                placeholder="Street address, city or postal code"
+                                                data-translate-placeholder="estimator_pickup_ph">
+                                            <div id="dropoff-suggestions" class="address-suggestions"></div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="distance-display" data-translate="estimator_distance">Distance</label>
+                                        <div id="distance-display" class="distance-display">
+                                            <span id="distance-text" data-translate="estimator_distance_placeholder">Select pickup and drop-off locations to calculate distance</span>
+                                            <div id="distance-loader" class="distance-loader" style="display: none;">
+                                                <div class="spinner"></div>
+                                                <span data-translate="estimator_calculating">Calculating distance...</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button type="button" id="auto-calculate-btn" class="btn btn-primary" disabled data-translate="estimator_auto_calculate">Calculate distance</button>
                                 </div>
-                                <button type="button" id="auto-calculate-btn" class="btn btn-primary" disabled data-translate="estimator_auto_calculate">Calculate distance</button>
+
+                                <div class="location-summary" id="location-summary" style="display: none;">
+                                    <div class="location-info">
+                                        <div class="location-item">
+                                            <strong data-translate="estimator_pickup">Pickup:</strong> <span id="pickup-address">Not set</span>
+                                        </div>
+                                        <div class="location-item">
+                                            <strong data-translate="estimator_dropoff">Drop-off:</strong> <span id="dropoff-address">Not set</span>
+                                        </div>
+                                        <div class="location-item">
+                                            <strong data-translate="estimator_distance">Distance:</strong> <span id="route-distance">0 miles</span>
+                                        </div>
+                                    </div>
+                                    <button type="button" id="edit-locations-btn" class="btn btn-secondary" data-translate="estimator_edit_locations">Edit locations</button>
+                                </div>
                             </div>
 
-                            <!-- Location Summary -->
-                            <div class="location-summary" id="location-summary" style="display: none;">
-                                <div class="location-info">
-                                    <div class="location-item">
-                                        <strong data-translate="estimator_pickup">Pickup:</strong> <span id="pickup-address">Not set</span>
-                                    </div>
-                                    <div class="location-item">
-                                        <strong data-translate="estimator_dropoff">Drop-off:</strong> <span id="dropoff-address">Not set</span>
-                                    </div>
-                                    <div class="location-item">
-                                        <strong data-translate="estimator_distance">Distance:</strong> <span id="route-distance">0 miles</span>
-                                    </div>
-                                </div>
-                                <button type="button" id="edit-locations-btn" class="btn btn-secondary" data-translate="estimator_edit_locations">Edit locations</button>
+                            <p class="range-note" data-translate="estimator_range_note">This range is a planning aid only. Your quote comes from the inventory you send — a coordinator confirms access, packing and route.</p>
+                            <div id="cost-result" class="cost-result hidden">
+                                <strong><span data-translate="estimator_total_cost">Planning range</span>: <span id="estimated-cost">$0</span></strong>
+                                <div id="cost-breakdown" class="cost-breakdown"></div>
+                                <p class="cost-disclaimer" data-translate="estimator_cost_disclaimer">Not a quote. A coordinator prices the inventory you send.</p>
                             </div>
-                        </div>
-
-                        <div id="cost-result" class="cost-result hidden">
-                            <strong><span data-translate="estimator_total_cost">Planning range</span>: <span id="estimated-cost">$0</span></strong>
-                            <div id="cost-breakdown" class="cost-breakdown"></div>
-                            <p class="cost-disclaimer" data-translate="estimator_cost_disclaimer">Not a quote. A coordinator prices the inventory you send.</p>
                         </div>
                     </div>
 
-                    <form class="share-form" id="inventory-share-form" novalidate>
-                        <h3 data-translate="estimator_share_title">Send this list to Muhtar</h3>
-                        <p class="share-lede" data-translate="estimator_share_lede">The inventory is the brief. Share it and a coordinator quotes from what you loaded — not a blank form.</p>
-                        <div class="field-row">
-                            <div>
-                                <label for="share-name" data-translate="estimator_share_name">Name</label>
-                                <input id="share-name" name="name" type="text" autocomplete="name" required>
+                    <div class="inv-panel" data-inv-panel="3" hidden>
+                        <form class="share-form" id="inventory-share-form" novalidate>
+                            <h3 data-translate="estimator_share_title">Send this list to Muhtar</h3>
+                            <p class="share-lede" data-translate="estimator_share_lede">The inventory is the brief. Share it and a coordinator quotes from what you loaded — not a blank form.</p>
+                            <div class="field-row">
+                                <div>
+                                    <label for="share-name" data-translate="estimator_share_name">Name</label>
+                                    <input id="share-name" name="name" type="text" autocomplete="name" required>
+                                </div>
+                                <div>
+                                    <label for="share-phone" data-translate="estimator_share_phone">Phone</label>
+                                    <input id="share-phone" name="phone" type="tel" autocomplete="tel" required>
+                                </div>
                             </div>
-                            <div>
-                                <label for="share-phone" data-translate="estimator_share_phone">Phone</label>
-                                <input id="share-phone" name="phone" type="tel" autocomplete="tel" required>
+                            <label for="share-email" data-translate="estimator_share_email">Email</label>
+                            <input id="share-email" name="email" type="email" autocomplete="email" required>
+                            <div class="field-row">
+                                <div>
+                                    <label for="share-date" data-translate="estimator_share_date">Preferred date</label>
+                                    <input id="share-date" name="move_date" type="date">
+                                </div>
+                                <div>
+                                    <label for="share-notes" data-translate="estimator_share_notes">Notes</label>
+                                    <input id="share-notes" name="notes" type="text" data-translate-placeholder="estimator_share_notes_ph" placeholder="Stairs, piano, parking…">
+                                </div>
                             </div>
-                        </div>
-                        <label for="share-email" data-translate="estimator_share_email">Email</label>
-                        <input id="share-email" name="email" type="email" autocomplete="email" required>
-                        <div class="field-row">
-                            <div>
-                                <label for="share-date" data-translate="estimator_share_date">Preferred date</label>
-                                <input id="share-date" name="move_date" type="date">
+                            <p class="share-error" id="share-error" hidden></p>
+                            <div class="share-success" id="share-success" hidden>
+                                <h3 data-translate="estimator_share_success_title">Inventory received</h3>
+                                <p data-translate="estimator_share_success_text">A coordinator will review the list and follow up with a quote. Keep this page if you want to add more items.</p>
+                                <p class="share-mailhint" id="share-mailhint" hidden>
+                                    <a id="share-mailto" href="mailto:moving@muhtar.ca">If a mail window did not open, tap here to send the list.</a>
+                                </p>
                             </div>
-                            <div>
-                                <label for="share-notes" data-translate="estimator_share_notes">Notes</label>
-                                <input id="share-notes" name="notes" type="text" data-translate-placeholder="estimator_share_notes_ph" placeholder="Stairs, piano, parking…">
-                            </div>
-                        </div>
-                        <p class="share-error" id="share-error" hidden></p>
-                        <button type="submit" id="book-truck" class="btn btn-primary" data-translate="estimator_get_quote">Send my inventory</button>
-                        <div class="share-success" id="share-success" hidden>
-                            <h3 data-translate="estimator_share_success_title">Inventory received</h3>
-                            <p data-translate="estimator_share_success_text">A coordinator will review the list and follow up with a quote. Keep this page if you want to add more items.</p>
-                            <p class="share-mailhint" id="share-mailhint" hidden>
-                                <a id="share-mailto" href="mailto:moving@muhtar.ca">If a mail window did not open, tap here to send the list.</a>
-                            </p>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
-                <div class="modal-footer">
-                    <button id="play-again" class="btn btn-secondary" data-translate="estimator_try_another">Load a different move</button>
+                <div class="modal-footer inv-footer">
+                    <button type="button" id="inv-back" class="btn btn-secondary" data-translate="estimator_inv_back" disabled>Back</button>
+                    <button type="button" id="play-again" class="btn-text" data-translate="estimator_try_another">Load a different move</button>
+                    <button type="button" id="inv-next" class="btn btn-primary" data-translate="estimator_inv_continue">Continue</button>
+                    <button type="submit" form="inventory-share-form" id="book-truck" class="btn btn-primary hidden" hidden data-translate="estimator_get_quote">Send my inventory</button>
                 </div>
             </div>
         </div>
@@ -470,6 +485,7 @@
     </footer>
 
     <script src="../js/lead-mail.js"></script>
+    <script src="../js/address-search.js"></script>
     <script src="script.js"></script>
     <script src="../js/i18n.js"></script>
     <script src="../translations.js"></script>

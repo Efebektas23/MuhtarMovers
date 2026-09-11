@@ -32,6 +32,56 @@ function setPlayStep(step) {
     });
 }
 
+let inventoryStep = 1;
+
+function setInventoryStep(step) {
+    inventoryStep = Math.max(1, Math.min(3, Number(step) || 1));
+    document.querySelectorAll('[data-inv-panel]').forEach(function (panel) {
+        var active = Number(panel.getAttribute('data-inv-panel')) === inventoryStep;
+        panel.classList.toggle('is-active', active);
+        panel.hidden = !active;
+    });
+    document.querySelectorAll('[data-inv-tab]').forEach(function (tab) {
+        tab.classList.toggle('is-active', Number(tab.getAttribute('data-inv-tab')) === inventoryStep);
+    });
+    var back = document.getElementById('inv-back');
+    var next = document.getElementById('inv-next');
+    var send = document.getElementById('book-truck');
+    var success = document.getElementById('share-success');
+    var sent = !!(success && !success.hidden);
+    if (back) back.disabled = inventoryStep === 1;
+    if (next) {
+      next.hidden = inventoryStep === 3 || sent;
+      next.classList.toggle('hidden', next.hidden);
+    }
+    if (send) {
+      send.hidden = inventoryStep !== 3 || sent;
+      send.classList.toggle('hidden', send.hidden);
+    }
+    var body = document.querySelector('#results-modal .modal-body');
+    if (body) body.scrollTop = 0;
+}
+
+function setupInventorySheet() {
+    var next = document.getElementById('inv-next');
+    var back = document.getElementById('inv-back');
+    if (next) {
+        next.addEventListener('click', function () {
+            setInventoryStep(inventoryStep + 1);
+        });
+    }
+    if (back) {
+        back.addEventListener('click', function () {
+            setInventoryStep(inventoryStep - 1);
+        });
+    }
+    document.querySelectorAll('[data-inv-tab]').forEach(function (tab) {
+        tab.addEventListener('click', function () {
+            setInventoryStep(tab.getAttribute('data-inv-tab'));
+        });
+    });
+}
+
 function groupedInventoryLines() {
     const groups = {};
     gameState.loadedItems.forEach(function (item) {
@@ -891,6 +941,8 @@ function showResults() {
     // Display box requirements
     displayBoxRequirements();
 
+    updatePackingOption(gameState.selectedPackingOption);
+
     // Setup modal event listeners
     setupModalEventListeners();
 
@@ -903,24 +955,20 @@ function showResults() {
         modal.style.display = 'flex';
         modal.classList.remove('hidden');
         setPlayStep('share');
-        const shareForm = document.getElementById('inventory-share-form');
-        if (shareForm) {
-            const success = document.getElementById('share-success');
-            const submitBtn = document.getElementById('book-truck');
-            const hint = document.getElementById('share-mailhint');
-            if (success) success.hidden = true;
-            if (hint) hint.hidden = true;
-            if (submitBtn) submitBtn.hidden = false;
-            setTimeout(function () {
-                shareForm.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-            }, 120);
-        }
+        var success = document.getElementById('share-success');
+        var hint = document.getElementById('share-mailhint');
+        if (success) success.hidden = true;
+        if (hint) hint.hidden = true;
+        setInventoryStep(1);
     }
 }
 
 function updatePackingOption(option) {
     gameState.selectedPackingOption = option;
-    showNotification(`Packing option updated: ${packingOptions[option].name}`, 'success');
+    document.querySelectorAll('.packing-option').forEach(function (label) {
+        var input = label.querySelector('input[name="packing"]');
+        label.classList.toggle('is-selected', !!(input && input.value === option && input.checked));
+    });
 }
 
 function displayLoadedItemsList() {
@@ -967,31 +1015,10 @@ function displayLoadedItemsList() {
                     <span class="quantity-number">${itemGroup.quantity}</span>
                     <button class="quantity-btn increase-btn" data-item-name="${itemGroup.name}">+</button>
                 </div>
-                <button class="remove-item-btn" data-item-name="${itemGroup.name}">Remove All</button>
+                <button class="remove-item-btn" data-item-name="${itemGroup.name}" aria-label="Remove all">×</button>
             </div>
         `;
     });
-
-    // Add summary
-    html += `
-        <div class="items-summary">
-            <strong>Summary</strong>
-            <div class="summary-stats">
-                <div class="summary-stat">
-                    <div class="summary-stat-value">${gameState.itemCount}</div>
-                    <div class="summary-stat-label">Total Items</div>
-                </div>
-                <div class="summary-stat">
-                    <div class="summary-stat-value">${gameState.totalVolume.toFixed(1)}m³</div>
-                    <div class="summary-stat-label">Volume</div>
-                </div>
-                <div class="summary-stat">
-                    <div class="summary-stat-value">${gameState.totalWeight.toLocaleString()}</div>
-                    <div class="summary-stat-label">Weight (lbs)</div>
-                </div>
-            </div>
-        </div>
-    `;
 
     itemsList.innerHTML = html;
 
@@ -1399,6 +1426,10 @@ function bookTruck() {
         packing: packing,
         pickup: pickup || '(not set)',
         dropoff: dropoff || '(not set)',
+        pickup_lat: pickupCoords ? String(pickupCoords.lat) : '',
+        pickup_lng: pickupCoords ? String(pickupCoords.lng) : '',
+        dropoff_lat: dropoffCoords ? String(dropoffCoords.lat) : '',
+        dropoff_lng: dropoffCoords ? String(dropoffCoords.lng) : '',
         distance_miles: String(gameState.distance || ''),
         planning_range: rangeEl ? rangeEl.textContent : '(not calculated)',
         inventory: inventory,
@@ -1428,6 +1459,8 @@ function bookTruck() {
         'Packing: ' + packing,
         'Pickup: ' + (pickup || '(not set)'),
         'Drop-off: ' + (dropoff || '(not set)'),
+        'Pickup coords: ' + (pickupCoords ? pickupCoords.lat + ', ' + pickupCoords.lng : '(not set)'),
+        'Drop-off coords: ' + (dropoffCoords ? dropoffCoords.lat + ', ' + dropoffCoords.lng : '(not set)'),
         '',
         'INVENTORY',
         inventory
@@ -1511,6 +1544,7 @@ function finishShare(usedMailto, mailtoHref) {
         submitBtn.textContent = gt('estimator_get_quote', 'Send my inventory');
     }
     if (success) success.hidden = false;
+    setInventoryStep(3);
     if (hint && hintLink) {
         if (usedMailto && mailtoHref) {
             hint.hidden = false;
@@ -2357,62 +2391,91 @@ function setupLocationForm() {
     }
 }
 
-// Setup autocomplete for input field
+function applyLocationSelection(type, address, coords) {
+    if (type === 'pickup') {
+        pickupAddress = address;
+        pickupCoords = coords;
+        gameState.pickupAddress = address;
+    } else {
+        dropoffAddress = address;
+        dropoffCoords = coords;
+        gameState.dropoffAddress = address;
+    }
+
+    if (pickupCoords && dropoffCoords) {
+        const autoCalculateBtn = document.getElementById('auto-calculate-btn');
+        const distanceText = document.getElementById('distance-text');
+        if (autoCalculateBtn) autoCalculateBtn.disabled = false;
+        if (distanceText) distanceText.textContent = gt('estimator_distance_ready', 'Ready to calculate distance');
+    }
+}
+
+// Setup autocomplete for input field — same helper as Get my moving quote
 function setupAutocomplete(inputElement, type) {
+    if (!inputElement || inputElement.dataset.placesBound) return;
     const suggestionsContainer = document.getElementById(`${type}-suggestions`);
-    let selectedIndex = -1;
+    const binder = window.MuhtarAddressSearch && window.MuhtarAddressSearch.bind;
+
+    if (typeof binder === 'function') {
+        binder(inputElement, {
+            suggestionsEl: suggestionsContainer,
+            types: ['geocode'],
+            onSelect: function (place) {
+                const address = place.formattedAddress || inputElement.value;
+                inputElement.value = address;
+                applyLocationSelection(type, address, place.location || null);
+            },
+            onInput: function () {
+                if (type === 'pickup') {
+                    pickupCoords = null;
+                    pickupAddress = inputElement.value;
+                } else {
+                    dropoffCoords = null;
+                    dropoffAddress = inputElement.value;
+                }
+                const autoCalculateBtn = document.getElementById('auto-calculate-btn');
+                if (autoCalculateBtn) autoCalculateBtn.disabled = true;
+            }
+        });
+        inputElement.dataset.placesBound = '1';
+        return;
+    }
+
+    const selectedIndex = { value: -1 };
     let searchTimeout = null;
 
     inputElement.addEventListener('input', function () {
         const query = this.value.trim();
-
         if (query.length < 3) {
             suggestionsContainer.style.display = 'none';
             return;
         }
-
-        // Clear previous timeout
-        if (searchTimeout) {
-            clearTimeout(searchTimeout);
-        }
-
-        // Show loading state
-        suggestionsContainer.innerHTML = '<div class="suggestion-item loading">🔍 Searching...</div>';
+        if (searchTimeout) clearTimeout(searchTimeout);
+        suggestionsContainer.innerHTML = '<div class="suggestion-item loading">Searching…</div>';
         suggestionsContainer.style.display = 'block';
-
-        // Debounce search requests
         searchTimeout = setTimeout(() => {
             searchAddresses(query, type, inputElement, suggestionsContainer);
         }, 500);
     });
 
-    // Keyboard navigation
     inputElement.addEventListener('keydown', function (e) {
         const suggestions = suggestionsContainer.querySelectorAll('.suggestion-item:not(.loading):not(.no-results):not(.error)');
-
         if (e.key === 'ArrowDown') {
             e.preventDefault();
-            selectedIndex = Math.min(selectedIndex + 1, suggestions.length - 1);
-            updateSelectedSuggestion(suggestions, selectedIndex);
+            selectedIndex.value = Math.min(selectedIndex.value + 1, suggestions.length - 1);
+            updateSelectedSuggestion(suggestions, selectedIndex.value);
         } else if (e.key === 'ArrowUp') {
             e.preventDefault();
-            selectedIndex = Math.max(selectedIndex - 1, -1);
-            updateSelectedSuggestion(suggestions, selectedIndex);
+            selectedIndex.value = Math.max(selectedIndex.value - 1, -1);
+            updateSelectedSuggestion(suggestions, selectedIndex.value);
         } else if (e.key === 'Enter') {
             e.preventDefault();
-            if (selectedIndex >= 0 && suggestions[selectedIndex]) {
-                suggestions[selectedIndex].click();
+            if (selectedIndex.value >= 0 && suggestions[selectedIndex.value]) {
+                suggestions[selectedIndex.value].click();
             }
         } else if (e.key === 'Escape') {
             suggestionsContainer.style.display = 'none';
-            selectedIndex = -1;
-        }
-    });
-
-    // Hide suggestions when clicking outside
-    document.addEventListener('click', function (e) {
-        if (!inputElement.contains(e.target) && !suggestionsContainer.contains(e.target)) {
-            suggestionsContainer.style.display = 'none';
+            selectedIndex.value = -1;
         }
     });
 }
@@ -2686,7 +2749,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     initializeElements();
     setupEventListeners();
-    setupLocationForm(); // Add location form setup
+    setupLocationForm();
+    setupInventorySheet();
+    if (window.MuhtarAddressSearch && typeof window.MuhtarAddressSearch.loadGoogle === 'function') {
+        window.MuhtarAddressSearch.loadGoogle();
+    }
     showInitialScreen();
 
     console.log('App initialized successfully');

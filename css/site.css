@@ -460,7 +460,7 @@ ul { margin: 0; padding: 0; list-style: none; }
 
 .why-photo .film-frame video,
 .why-photo .film-frame .film-fallback {
-  object-position: 62% 32%;
+  object-position: 36% 42%;
 }
 
 .film-frame video,
@@ -573,6 +573,7 @@ ul { margin: 0; padding: 0; list-style: none; }
 }
 
 .route-field {
+  position: relative;
   padding: 0.9rem 1.1rem 1.05rem;
   border-right: 1px solid var(--line);
 }
@@ -1247,7 +1248,7 @@ ul { margin: 0; padding: 0; list-style: none; }
   background: var(--cream);
   color: var(--ink);
   box-shadow: 0 24px 60px rgba(23, 21, 18, 0.28);
-  overflow: hidden;
+  overflow: visible;
 }
 
 .quote-dialog::backdrop {
@@ -1330,7 +1331,7 @@ ul { margin: 0; padding: 0; list-style: none; }
 
 .quote-body {
   padding: 1.35rem 1.35rem 0.5rem;
-  overflow: auto;
+  overflow: visible;
 }
 
 .why-ask {
@@ -1340,6 +1341,7 @@ ul { margin: 0; padding: 0; list-style: none; }
 }
 
 .field {
+  position: relative;
   margin-bottom: 1rem;
 }
 
@@ -1432,7 +1434,53 @@ ul { margin: 0; padding: 0; list-style: none; }
 .hidden { display: none !important; }
 .quote-step[hidden] { display: none !important; }
 
-.pac-container { z-index: 99999; }
+.pac-container { z-index: 2147483647; }
+
+.address-suggestions {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  background: #fff;
+  border: 1px solid var(--line-strong, rgba(18, 21, 28, 0.16));
+  max-height: 14rem;
+  overflow-y: auto;
+  box-shadow: 0 12px 32px rgba(18, 21, 28, 0.18);
+}
+
+.address-suggestions .suggestion-item {
+  padding: 0.7rem 0.85rem;
+  cursor: pointer;
+  border-bottom: 1px solid var(--line, rgba(18, 21, 28, 0.08));
+}
+
+.address-suggestions .suggestion-item:last-child { border-bottom: 0; }
+
+.address-suggestions .suggestion-item:hover,
+.address-suggestions .suggestion-item.active {
+  background: var(--paper-2, #f3efe8);
+}
+
+.address-suggestions .suggestion-main {
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+
+.address-suggestions .suggestion-details {
+  font-size: 0.78rem;
+  color: var(--muted, #6a7078);
+  margin-top: 0.15rem;
+}
+
+.address-suggestions .suggestion-item.loading,
+.address-suggestions .suggestion-item.no-results,
+.address-suggestions .suggestion-item.error {
+  color: var(--muted, #6a7078);
+  font-style: italic;
+  cursor: default;
+}
 
 /* Reveal */
 
