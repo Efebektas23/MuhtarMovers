@@ -14,8 +14,7 @@ const CONFIG = {
     // Contact Information (can be customized per environment)
     CONTACT: {
         PHONE: '+1 (778) 348-2208',
-        EMAIL_CA: 'moving@muhtar.ca',
-        EMAIL_US: 'moving@muhtar.us',
+        EMAIL: 'moving@muhtar.ca',
         WHATSAPP: '905333022974',
         OFFICES: {
             CANADA: 'Vancouver, BC',

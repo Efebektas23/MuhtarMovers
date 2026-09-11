@@ -16,7 +16,6 @@ let gameState = {
 };
 
 const SHARE_EMAIL = 'moving@muhtar.ca';
-const SHARE_EMAIL_US = 'moving@muhtar.us';
 let shareFormBound = false;
 
 function gt(key, fallback) {
@@ -1387,7 +1386,6 @@ function bookTruck() {
         _template: 'table',
         _captcha: 'false',
         _honey: '',
-        _cc: SHARE_EMAIL_US,
         name: name,
         phone: phone,
         email: email,
@@ -1437,10 +1435,9 @@ function bookTruck() {
 
     const mailer = window.MuhtarLeadMail;
     const mailto = mailer && typeof mailer.buildMailto === 'function'
-        ? mailer.buildMailto(SHARE_EMAIL, SHARE_EMAIL_US, 'Inventory from truck loader — ' + name, bodyLines)
+        ? mailer.buildMailto(SHARE_EMAIL, '', 'Inventory from truck loader — ' + name, bodyLines)
         : 'mailto:' + SHARE_EMAIL +
-            '?cc=' + encodeURIComponent(SHARE_EMAIL_US) +
-            '&subject=' + encodeURIComponent('Inventory from truck loader — ' + name) +
+            '?subject=' + encodeURIComponent('Inventory from truck loader — ' + name) +
             '&body=' + encodeURIComponent(bodyLines);
 
     function restoreShareButton() {
@@ -1474,7 +1471,6 @@ function bookTruck() {
     if (mailer && typeof mailer.send === 'function') {
         mailer.send({
             email: SHARE_EMAIL,
-            cc: SHARE_EMAIL_US,
             data: payload,
             mailtoHref: mailto,
             subject: payload._subject,

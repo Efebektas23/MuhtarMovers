@@ -1,8 +1,7 @@
 (function () {
   "use strict";
 
-    var EMAIL = "moving@muhtar.ca";
-  var EMAIL_US = "moving@muhtar.us";
+  var EMAIL = "moving@muhtar.ca";
 
   var state = {
     step: 1,
@@ -264,7 +263,6 @@
       _template: "table",
       _captcha: "false",
       _honey: "",
-      _cc: EMAIL_US,
       name: state.name,
       phone: state.phone,
       email: state.email,
@@ -297,8 +295,8 @@
       "Details:",
       state.details || "(none)"
     ].join("\n");
-    return "mailto:" + EMAIL + "?cc=" + encodeURIComponent(EMAIL_US) +
-      "&subject=" + encodeURIComponent("Moving quote request — " + state.from + " → " + state.to) +
+    return "mailto:" + EMAIL +
+      "?subject=" + encodeURIComponent("Moving quote request — " + state.from + " → " + state.to) +
       "&body=" + encodeURIComponent(body);
   }
 
@@ -343,7 +341,6 @@
     if (typeof send === "function") {
       send({
         email: EMAIL,
-        cc: EMAIL_US,
         data: data,
         mailtoHref: href,
         subject: data._subject,
