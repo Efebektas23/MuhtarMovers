@@ -1284,10 +1284,34 @@ ul { margin: 0; padding: 0; list-style: none; }
 .quote-close {
   border: 0;
   background: none;
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   line-height: 1;
-  padding: 0.2rem;
+  padding: 0.35rem;
+  min-width: 2.5rem;
+  min-height: 2.5rem;
   color: var(--ink-soft);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.quote-shell.is-complete .quote-heading {
+  display: none;
+}
+
+.quote-shell.is-complete .quote-top {
+  border-bottom: 0;
+  padding-bottom: 0;
+  justify-content: flex-end;
+}
+
+.quote-done {
+  margin-top: 1.35rem;
+  min-width: 8rem;
+}
+
+.quote-mailhint {
+  margin: 1.1rem 0 0;
+  font-size: 0.92rem;
 }
 
 .progress-track {

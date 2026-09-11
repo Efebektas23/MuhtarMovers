@@ -908,7 +908,9 @@ function showResults() {
         if (shareForm) {
             const success = document.getElementById('share-success');
             const submitBtn = document.getElementById('book-truck');
+            const hint = document.getElementById('share-mailhint');
             if (success) success.hidden = true;
+            if (hint) hint.hidden = true;
             if (submitBtn) submitBtn.hidden = false;
             setTimeout(function () {
                 shareForm.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
@@ -1384,6 +1386,7 @@ function bookTruck() {
         _subject: 'Inventory from truck loader — ' + name,
         _template: 'table',
         _captcha: 'false',
+        _honey: '',
         _cc: SHARE_EMAIL_US,
         name: name,
         phone: phone,
@@ -1432,35 +1435,95 @@ function bookTruck() {
         inventory
     ].join('\n');
 
-    const mailto = 'mailto:' + SHARE_EMAIL +
-        '?cc=' + encodeURIComponent(SHARE_EMAIL_US) +
-        '&subject=' + encodeURIComponent('Inventory from truck loader — ' + name) +
-        '&body=' + encodeURIComponent(bodyLines);
+    const mailer = window.MuhtarLeadMail;
+    const mailto = mailer && typeof mailer.buildMailto === 'function'
+        ? mailer.buildMailto(SHARE_EMAIL, SHARE_EMAIL_US, 'Inventory from truck loader — ' + name, bodyLines)
+        : 'mailto:' + SHARE_EMAIL +
+            '?cc=' + encodeURIComponent(SHARE_EMAIL_US) +
+            '&subject=' + encodeURIComponent('Inventory from truck loader — ' + name) +
+            '&body=' + encodeURIComponent(bodyLines);
+
+    function restoreShareButton() {
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.hidden = false;
+            submitBtn.textContent = gt('estimator_get_quote', 'Send my inventory');
+        }
+    }
+
+    function onSent(result) {
+        finishShare(result && result.method === 'mailto', result && result.mailtoHref);
+    }
+
+    function onFail(fail) {
+        restoreShareButton();
+        if (err) {
+            err.hidden = false;
+            err.textContent = gt('estimator_share_failed', 'We could not send the inventory automatically. Call, use WhatsApp, or email moving@muhtar.ca.');
+        }
+        const hint = document.getElementById('share-mailhint');
+        const hintLink = document.getElementById('share-mailto');
+        const fallback = (fail && fail.mailtoHref) || mailto;
+        if (hint && hintLink && fallback) {
+            hint.hidden = false;
+            hintLink.href = fallback;
+            hintLink.textContent = gt('estimator_share_mailhint', 'If a mail window did not open, tap here to send the list.');
+        }
+    }
+
+    if (mailer && typeof mailer.send === 'function') {
+        mailer.send({
+            email: SHARE_EMAIL,
+            cc: SHARE_EMAIL_US,
+            data: payload,
+            mailtoHref: mailto,
+            subject: payload._subject,
+            timeoutMs: 12000
+        }).then(onSent).catch(onFail);
+        return;
+    }
 
     fetch('https://formsubmit.co/ajax/' + SHARE_EMAIL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify(payload)
     }).then(function (res) {
-        if (!res.ok) throw new Error('submit failed');
-        return res.json();
+        return res.json().catch(function () { return {}; }).then(function (json) {
+            var ok = json && (json.success === true || json.success === 'true');
+            if (!res.ok || !ok) throw new Error((json && json.message) || 'submit failed');
+        });
     }).then(function () {
-        finishShare(false);
+        onSent({ method: 'form', mailtoHref: mailto });
     }).catch(function () {
-        finishShare(true);
-        window.location.href = mailto;
+        try {
+            window.location.href = mailto;
+            onSent({ method: 'mailto', mailtoHref: mailto });
+        } catch (err) {
+            onFail({ mailtoHref: mailto });
+        }
     });
 }
 
-function finishShare(usedMailto) {
+function finishShare(usedMailto, mailtoHref) {
     const submitBtn = document.getElementById('book-truck');
     const success = document.getElementById('share-success');
+    const hint = document.getElementById('share-mailhint');
+    const hintLink = document.getElementById('share-mailto');
     if (submitBtn) {
         submitBtn.disabled = false;
         submitBtn.hidden = true;
         submitBtn.textContent = gt('estimator_get_quote', 'Send my inventory');
     }
     if (success) success.hidden = false;
+    if (hint && hintLink) {
+        if (usedMailto && mailtoHref) {
+            hint.hidden = false;
+            hintLink.href = mailtoHref;
+            hintLink.textContent = gt('estimator_share_mailhint', 'If a mail window did not open, tap here to send the list.');
+        } else {
+            hint.hidden = true;
+        }
+    }
     showNotification(gt('estimator_share_sent', 'Inventory sent.'), 'success');
     window.dataLayer = window.dataLayer || [];
     window.dataLayer.push({

@@ -51,9 +51,31 @@
     }
   }
 
+  function resetQuoteAfterSuccess() {
+    state.completed = false;
+    state.sending = false;
+    state.started = false;
+    state.step = 1;
+    state.from = "";
+    state.to = "";
+    state.moveType = "";
+    state.moveSize = "";
+    state.moveDate = "";
+    state.dateFlexible = false;
+    state.name = "";
+    state.phone = "";
+    state.email = "";
+    state.details = "";
+    syncForm();
+    setError("");
+    var hint = el("quote-success-mailhint");
+    if (hint) hint.classList.add("hidden");
+  }
+
   function openQuote(opts) {
     var dialog = $("#quote");
     if (!dialog) return;
+    if (state.completed) resetQuoteAfterSuccess();
     if (opts && opts.from) state.from = opts.from;
     if (opts && opts.to) state.to = opts.to;
     if (opts && opts.from && opts.to) state.step = 2;
@@ -74,10 +96,15 @@
   function closeQuote() {
     var dialog = $("#quote");
     if (!dialog) return;
+    var wasCompleted = state.completed;
     if (typeof dialog.close === "function") dialog.close();
     else dialog.removeAttribute("open");
-    if (state.started && !state.completed) {
+    if (state.started && !wasCompleted) {
       track("quote_abandonment", { last_step: state.step });
+    }
+    if (wasCompleted) {
+      resetQuoteAfterSuccess();
+      renderStep({ skipFocus: true });
     }
   }
 
@@ -204,8 +231,12 @@
     }
     var formView = el("quote-form-view");
     var successView = el("quote-success-view");
+    var shell = $(".quote-shell");
+    var dialog = $("#quote");
     if (formView) formView.classList.toggle("hidden", state.completed);
     if (successView) successView.classList.toggle("hidden", !state.completed);
+    if (shell) shell.classList.toggle("is-complete", state.completed);
+    if (dialog) dialog.setAttribute("aria-labelledby", state.completed ? "quote-success-heading" : "quote-title");
     var first = $(".quote-step:not(.hidden) input, .quote-step:not(.hidden) textarea, .quote-step:not(.hidden) .choice");
     if (first && !state.completed && !opts.skipFocus) setTimeout(function () { first.focus(); }, 40);
   }
@@ -232,6 +263,7 @@
       _subject: "Moving quote request — " + state.from + " → " + state.to,
       _template: "table",
       _captcha: "false",
+      _honey: "",
       _cc: EMAIL_US,
       name: state.name,
       phone: state.phone,
@@ -270,40 +302,96 @@
       "&body=" + encodeURIComponent(body);
   }
 
+  function restoreQuoteNext() {
+    var next = $("#quote-next");
+    state.sending = false;
+    if (next) {
+      next.disabled = false;
+      next.textContent = t("quote_request");
+    }
+  }
+
   function submitQuote() {
     var next = $("#quote-next");
     state.sending = true;
+    setError("");
     if (next) {
       next.disabled = true;
       next.textContent = t("quote_sending");
     }
     var data = payload();
+    var href = mailtoHref();
+    var send = window.MuhtarLeadMail && window.MuhtarLeadMail.send;
+
+    function onSent(result) {
+      finishSuccess(result && result.method === "mailto", result && result.mailtoHref);
+    }
+
+    function onFail(err) {
+      restoreQuoteNext();
+      renderStep({ skipFocus: true });
+      var fallback = (err && err.mailtoHref) || href;
+      setError(t("quote_err_send"));
+      var hint = el("quote-success-mailhint");
+      var link = el("quote-success-mailto");
+      if (hint && link && fallback) {
+        link.href = fallback;
+        link.textContent = t("quote_success_mailhint");
+      }
+    }
+
+    if (typeof send === "function") {
+      send({
+        email: EMAIL,
+        cc: EMAIL_US,
+        data: data,
+        mailtoHref: href,
+        subject: data._subject,
+        timeoutMs: 12000
+      }).then(onSent).catch(onFail);
+      return;
+    }
 
     fetch("https://formsubmit.co/ajax/" + EMAIL, {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify(data)
     }).then(function (res) {
-      if (!res.ok) throw new Error("submit failed");
-      return res.json();
+      return res.json().catch(function () { return {}; }).then(function (json) {
+        var ok = json && (json.success === true || json.success === "true");
+        if (!res.ok || !ok) throw new Error((json && json.message) || "submit failed");
+      });
     }).then(function () {
-      finishSuccess(false);
+      onSent({ method: "form", mailtoHref: href });
     }).catch(function () {
-      finishSuccess(true);
-      window.location.href = mailtoHref();
+      try {
+        window.location.href = href;
+        onSent({ method: "mailto", mailtoHref: href });
+      } catch (err) {
+        onFail({ mailtoHref: href });
+      }
     });
   }
 
-  function finishSuccess(usedMailto) {
+  function finishSuccess(usedMailto, href) {
     state.completed = true;
     state.sending = false;
     track("quote_form_completed", { method: usedMailto ? "mailto" : "form" });
-    renderStep({ skipFocus: true });
-    var next = $("#quote-next");
-    if (next) {
-      next.disabled = false;
-      next.textContent = t("quote_request");
+    var hint = el("quote-success-mailhint");
+    var link = el("quote-success-mailto");
+    if (hint && link) {
+      if (usedMailto && href) {
+        link.href = href;
+        link.textContent = t("quote_success_mailhint");
+        hint.classList.remove("hidden");
+      } else {
+        hint.classList.add("hidden");
+      }
     }
+    renderStep({ skipFocus: true });
+    restoreQuoteNext();
+    var done = el("quote-done");
+    if (done) setTimeout(function () { done.focus(); }, 40);
   }
 
   function bindPlaces() {
@@ -526,11 +614,22 @@
     if (back) back.addEventListener("click", prevStep);
     var closeBtn = $("#quote-close");
     if (closeBtn) closeBtn.addEventListener("click", closeQuote);
+    var doneBtn = $("#quote-done");
+    if (doneBtn) doneBtn.addEventListener("click", closeQuote);
 
     if (dialog) {
+      dialog.addEventListener("click", function (e) {
+        if (e.target === dialog) closeQuote();
+      });
       dialog.addEventListener("cancel", function () {
         if (state.started && !state.completed) {
           track("quote_abandonment", { last_step: state.step, reason: "cancel" });
+        }
+      });
+      dialog.addEventListener("close", function () {
+        if (state.completed) {
+          resetQuoteAfterSuccess();
+          renderStep({ skipFocus: true });
         }
       });
     }

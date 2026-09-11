@@ -583,14 +583,14 @@
 
     <dialog class="quote-dialog" id="quote" aria-labelledby="quote-title">
         <div class="quote-shell">
-            <div id="quote-form-view">
-                <div class="quote-top">
-                    <div>
-                        <p class="quote-progress" id="quote-progress-label">Step 1 of 5</p>
-                        <h2 id="quote-title">Your moving quote</h2>
-                    </div>
-                    <button class="quote-close" id="quote-close" type="button" data-translate-aria="quote_close" aria-label="Close quote form">×</button>
+            <div class="quote-top">
+                <div class="quote-heading">
+                    <p class="quote-progress" id="quote-progress-label">Step 1 of 5</p>
+                    <h2 id="quote-title">Your moving quote</h2>
                 </div>
+                <button class="quote-close" id="quote-close" type="button" data-translate-aria="quote_close" aria-label="Close quote form">×</button>
+            </div>
+            <div id="quote-form-view">
                 <div class="progress-track" aria-hidden="true"><span id="quote-progress-bar"></span></div>
                 <div class="quote-body">
                     <div class="quote-step" data-step="1">
@@ -665,16 +665,21 @@
             </div>
             <div class="quote-success hidden" id="quote-success-view">
                 <p class="eyebrow" data-translate="quote_success_kicker">Quote requested</p>
-                <h3 data-translate="quote_success_title">We have what we need.</h3>
+                <h3 id="quote-success-heading" data-translate="quote_success_title">We have what we need.</h3>
                 <p data-translate="quote_success_text">A coordinator will review your route and follow up with a clear estimate. If you would rather speak now:</p>
                 <div class="cta-actions">
                     <a class="btn btn-primary" href="tel:+17783482208" data-translate="cta_call_phone">Call (778) 348-2208</a>
                     <a class="text-link" href="https://wa.me/905333022974" target="_blank" rel="noopener">WhatsApp</a>
                 </div>
+                <p class="quote-mailhint hidden" id="quote-success-mailhint">
+                    <a id="quote-success-mailto" href="mailto:moving@muhtar.ca">If a mail window did not open, tap here to send your request.</a>
+                </p>
+                <button class="btn btn-ghost quote-done" id="quote-done" type="button" data-translate="quote_done">Done</button>
             </div>
         </div>
     </dialog>
 
+    <script src="js/lead-mail.js"></script>
     <script src="js/i18n.js"></script>
     <script src="language.js"></script>
     <script src="js/site.js"></script>
