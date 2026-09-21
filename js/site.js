@@ -498,9 +498,16 @@
         document.body.style.width = "";
         var root = document.documentElement;
         var previous = root.style.scrollBehavior;
+        var hashTarget = opts.hashTarget;
         root.style.scrollBehavior = "auto";
         window.scrollTo(0, scrollLock);
         root.style.scrollBehavior = previous;
+        if (hashTarget) {
+          requestAnimationFrame(function () {
+            hashTarget.scrollIntoView({ behavior: "auto", block: "start" });
+            if (hashTarget.id) history.pushState(null, "", "#" + hashTarget.id);
+          });
+        }
         if (opts.restoreFocus !== false && document.activeElement && mobile.contains(document.activeElement)) {
           toggle.focus({ preventScroll: true });
         }
@@ -520,8 +527,17 @@
         setMenu(!menuOpen());
       });
       $$(".mobile-nav a, .mobile-nav button").forEach(function (link) {
-        link.addEventListener("click", function () {
-          setMenu(false, { restoreFocus: !link.hasAttribute("data-open-quote") });
+        link.addEventListener("click", function (e) {
+          var href = link.getAttribute("href") || "";
+          var hashTarget = null;
+          if (href.charAt(0) === "#" && href.length > 1) {
+            hashTarget = document.querySelector(href);
+            if (hashTarget) e.preventDefault();
+          }
+          setMenu(false, {
+            restoreFocus: !hashTarget && !link.hasAttribute("data-open-quote"),
+            hashTarget: hashTarget
+          });
         });
       });
       document.addEventListener("keydown", function (e) {
