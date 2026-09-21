@@ -97,6 +97,7 @@
     renderStep();
     if (typeof dialog.showModal === "function") dialog.showModal();
     else dialog.setAttribute("open", "");
+    document.body.classList.add("quote-open");
     trapFocus(dialog);
   }
 
@@ -106,6 +107,7 @@
     var wasCompleted = state.completed;
     if (typeof dialog.close === "function") dialog.close();
     else dialog.removeAttribute("open");
+    document.body.classList.remove("quote-open");
     if (state.started && !wasCompleted) {
       track("quote_abandonment", { last_step: state.step });
     }
@@ -460,32 +462,86 @@
     var header = $(".site-header");
     var toggle = $(".nav-toggle");
     var mobile = $(".mobile-nav");
+    var scrollLock = 0;
+    function menuOpen() {
+      return !!(mobile && mobile.classList.contains("is-open"));
+    }
 
     function syncHeader() {
       if (!header) return;
-      var menuOpen = !!(mobile && mobile.classList.contains("is-open"));
-      header.classList.toggle("is-solid", window.scrollY > 16 || menuOpen);
+      var open = menuOpen();
+      header.classList.toggle("is-menu", open);
+      header.classList.toggle("is-solid", window.scrollY > 16 || open);
       header.classList.toggle("is-compact", window.scrollY > 24);
+    }
+
+    function setMenu(open, opts) {
+      if (!toggle || !mobile) return;
+      opts = opts || {};
+      mobile.classList.toggle("is-open", open);
+      toggle.setAttribute("aria-expanded", open ? "true" : "false");
+      document.body.classList.toggle("nav-open", open);
+      if (open) {
+        scrollLock = window.scrollY || window.pageYOffset || 0;
+        document.body.style.position = "fixed";
+        document.body.style.top = "-" + scrollLock + "px";
+        document.body.style.left = "0";
+        document.body.style.right = "0";
+        document.body.style.width = "100%";
+        var first = mobile.querySelector("a, button");
+        if (first) first.focus({ preventScroll: true });
+      } else {
+        document.body.style.position = "";
+        document.body.style.top = "";
+        document.body.style.left = "";
+        document.body.style.right = "";
+        document.body.style.width = "";
+        var root = document.documentElement;
+        var previous = root.style.scrollBehavior;
+        root.style.scrollBehavior = "auto";
+        window.scrollTo(0, scrollLock);
+        root.style.scrollBehavior = previous;
+        if (opts.restoreFocus !== false && document.activeElement && mobile.contains(document.activeElement)) {
+          toggle.focus({ preventScroll: true });
+        }
+      }
+      syncHeader();
     }
 
     syncHeader();
     window.addEventListener("scroll", syncHeader, { passive: true });
-    window.addEventListener("resize", syncHeader);
+    window.addEventListener("resize", function () {
+      if (window.innerWidth > 820 && menuOpen()) setMenu(false);
+      syncHeader();
+    });
 
     if (toggle && mobile) {
       toggle.addEventListener("click", function () {
-        var open = mobile.classList.toggle("is-open");
-        toggle.setAttribute("aria-expanded", open ? "true" : "false");
-        syncHeader();
+        setMenu(!menuOpen());
       });
-      $$(".mobile-nav a").forEach(function (link) {
+      $$(".mobile-nav a, .mobile-nav button").forEach(function (link) {
         link.addEventListener("click", function () {
-          mobile.classList.remove("is-open");
-          toggle.setAttribute("aria-expanded", "false");
-          syncHeader();
+          setMenu(false, { restoreFocus: !link.hasAttribute("data-open-quote") });
         });
       });
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && menuOpen()) setMenu(false);
+      });
     }
+
+    document.addEventListener("focusin", function (e) {
+      if (e.target && e.target.matches && e.target.matches("input, textarea, select")) {
+        document.body.classList.add("input-focus");
+      }
+    });
+    document.addEventListener("focusout", function () {
+      setTimeout(function () {
+        var active = document.activeElement;
+        if (!active || !active.matches || !active.matches("input, textarea, select")) {
+          document.body.classList.remove("input-focus");
+        }
+      }, 30);
+    });
   }
 
   function initFilms() {
@@ -558,8 +614,21 @@
   function initReveal() {
     var nodes = $$(".reveal");
     if (!nodes.length) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    var seen = [];
+    nodes.forEach(function (n) {
+      var parent = n.parentElement;
+      var count = 0;
+      if (parent) {
+        count = seen.filter(function (item) { return item === parent; }).length;
+        seen.push(parent);
+      }
+      n.style.setProperty("--d", Math.min(count, 5) * 80 + "ms");
+    });
+    function showAll() {
       nodes.forEach(function (n) { n.classList.add("is-in"); });
+    }
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) {
+      showAll();
       return;
     }
     var io = new IntersectionObserver(function (entries) {
@@ -569,8 +638,123 @@
           io.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.12 });
+    }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
     nodes.forEach(function (n) { io.observe(n); });
+  }
+
+  function initExperience() {
+    var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var progress = document.querySelector(".scroll-progress > span");
+    var hero = document.querySelector(".hero");
+    var heroFilm = document.querySelector("[data-parallax-hero]");
+    var heroCopy = document.querySelector(".hero-copy");
+    var shifts = $$(".media-shift");
+    var rails = $$("[data-rail]");
+    var floats = $$("[data-float]");
+    var cue = document.querySelector("[data-scroll-target]");
+    var marquee = document.querySelector(".trust-track");
+
+    if (cue) {
+      cue.addEventListener("click", function () {
+        var target = document.querySelector(cue.getAttribute("data-scroll-target"));
+        if (target) target.scrollIntoView({ behavior: reduced ? "auto" : "smooth" });
+      });
+    }
+
+    var sections = $$("main section[id], #contact");
+    var navLinks = $$(".nav a[href^='#'], .mobile-nav a[href^='#']");
+    if (sections.length && navLinks.length && "IntersectionObserver" in window) {
+      var spy = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          var id = entry.target.id;
+          navLinks.forEach(function (link) {
+            link.classList.toggle("is-active", link.getAttribute("href") === "#" + id);
+          });
+        });
+      }, { rootMargin: "-42% 0px -48% 0px", threshold: 0 });
+      sections.forEach(function (section) { spy.observe(section); });
+    }
+
+    if (marquee && "IntersectionObserver" in window && !reduced) {
+      var watch = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          marquee.style.animationPlayState = entry.isIntersecting ? "running" : "paused";
+        });
+      });
+      var marqueeHost = marquee.closest(".trust");
+      if (marqueeHost) watch.observe(marqueeHost);
+    }
+
+    if (reduced) return;
+
+    var ticking = false;
+    var narrowQuery = window.matchMedia("(max-width: 820px)");
+
+    function apply() {
+      ticking = false;
+      var y = window.scrollY || window.pageYOffset || 0;
+      var vh = window.innerHeight || 1;
+      var doc = document.documentElement.scrollHeight - vh;
+      var narrow = narrowQuery.matches;
+      var depth = narrow ? 0.55 : 1;
+
+      if (progress) {
+        var p = doc > 0 ? Math.min(1, Math.max(0, y / doc)) : 0;
+        progress.style.transform = "scaleX(" + p + ")";
+      }
+
+      if (hero && heroFilm) {
+        var heroRect = hero.getBoundingClientRect();
+        if (heroRect.bottom > 0 && heroRect.top < vh) {
+          heroFilm.style.transform = "translate3d(0," + (y * 0.15 * depth) + "px,0)";
+        }
+      }
+
+      if (heroCopy && hero) {
+        heroCopy.style.opacity = "";
+        heroCopy.style.transform = "";
+      }
+
+      shifts.forEach(function (el) {
+        var host = el.parentElement || el;
+        var rect = host.getBoundingClientRect();
+        if (rect.bottom < -120 || rect.top > vh + 120) return;
+        var center = rect.top + rect.height / 2;
+        var delta = (center - vh / 2) / vh;
+        var maxShift = rect.height * (narrow ? 0.05 : 0.08);
+        var travel = Math.max(-maxShift, Math.min(maxShift, delta * maxShift));
+        el.style.transform = "translate3d(0," + travel.toFixed(2) + "px,0)";
+      });
+
+      rails.forEach(function (rail) {
+        var parent = rail.parentElement;
+        if (!parent) return;
+        var rect = parent.getBoundingClientRect();
+        var passed = vh * 0.72 - rect.top;
+        var total = Math.max(rect.height * 0.9, 1);
+        var amount = Math.max(0, Math.min(1, passed / total));
+        rail.style.setProperty("--rail", amount.toFixed(3));
+      });
+
+      floats.forEach(function (el) {
+        var host = el.parentElement || el;
+        var rect = host.getBoundingClientRect();
+        if (rect.bottom < 0 || rect.top > vh) return;
+        var shift = (rect.top - vh * 0.4) * -0.08 * depth;
+        el.style.setProperty("--float", shift.toFixed(1) + "px");
+      });
+    }
+
+    function requestTick() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(apply);
+    }
+
+    apply();
+    window.addEventListener("scroll", requestTick, { passive: true });
+    window.addEventListener("resize", requestTick);
   }
 
   function initFaq() {
@@ -668,6 +852,7 @@
         }
       });
       dialog.addEventListener("close", function () {
+        document.body.classList.remove("quote-open");
         if (state.completed) {
           resetQuoteAfterSuccess();
           renderStep({ skipFocus: true });
@@ -690,6 +875,7 @@
     initHeader();
     initFilms();
     initReveal();
+    initExperience();
     initFaq();
     initTracking();
     initQuote();

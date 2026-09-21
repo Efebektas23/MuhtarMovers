@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <title data-translate-title="page_title">Muhtar Movers | Local, Long-Distance &amp; Canada–USA Moving</title>
     <meta name="description" content="Professional moving from Vancouver and Orlando. Local, long-distance and Canada–USA relocations with licensed, insured crews. Request a quote in a few steps.">
@@ -24,6 +24,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,opsz,wght@0,9..14,400;0,9..14,500;0,9..14,600;1,9..14,400;1,9..14,500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="preload" as="image" href="visuals/opt/video/hero-poster.jpg" fetchpriority="high">
     <link rel="stylesheet" href="css/site.css">
+    <link rel="stylesheet" href="css/experience.css">
+    <script>document.documentElement.classList.add("js");</script>
 
     <script src="config.js"></script>
     <script src="config-loader.js"></script>
@@ -90,6 +92,7 @@
 </head>
 <body class="page-home">
     <a class="skip" href="#main" data-translate="skip_content">Skip to content</a>
+    <div class="scroll-progress" aria-hidden="true"><span></span></div>
 
     <header class="site-header" id="header">
         <div class="container header-inner">
@@ -137,17 +140,21 @@
             <a href="#reviews" data-translate="nav_reviews">Reviews</a>
             <a href="#contact" data-translate="nav_contact">Contact</a>
             <a href="tel:+17783482208" data-translate="cta_call_phone">Call (778) 348-2208</a>
+            <button class="btn btn-on-dark mobile-nav-cta" type="button" data-open-quote data-source="mobile_nav" data-translate="cta_quote">Get a Quote</button>
         </nav>
     </header>
 
     <main id="main">
         <section class="hero" id="hero" aria-label="Introduction">
-            <div class="hero-film" aria-hidden="true">
-                <video class="js-film" autoplay muted loop playsinline preload="metadata" poster="visuals/opt/video/hero-poster.jpg" disablepictureinpicture>
-                    <source src="visuals/opt/video/hero.mp4" type="video/mp4">
-                </video>
+            <div class="hero-stage" aria-hidden="true">
+                <div class="hero-film" data-parallax-hero>
+                    <video class="js-film" autoplay muted loop playsinline preload="metadata" poster="visuals/opt/video/hero-poster.jpg" disablepictureinpicture>
+                        <source src="visuals/opt/video/hero.mp4" type="video/mp4">
+                    </video>
+                </div>
+                <div class="hero-veil"></div>
+                <div class="hero-grain"></div>
             </div>
-            <div class="hero-veil"></div>
             <div class="hero-copy">
                 <p class="eyebrow" data-translate="hero_eyebrow">Vancouver · Orlando · Canada ↔ USA</p>
                 <h1 data-translate-html="hero_title">Moving,<br><em>without the uncertainty.</em></h1>
@@ -172,15 +179,27 @@
                 <p class="route-hint" data-translate="hero_hint">Two minutes. Route, size and a date — we take it from there.</p>
             </div>
             <p class="hero-caption" data-translate="hero_caption">White-glove packing · Muhtar crew</p>
+            <button class="scroll-cue" type="button" data-scroll-target="#services" data-translate-aria="hero_see_how" aria-label="See How It Works"><span></span></button>
         </section>
 
         <section class="trust" aria-label="Trust signals">
-            <div class="container trust-row">
-                <div class="trust-item" data-translate="trust_insured">Fully insured</div>
-                <div class="trust-item" data-translate="trust_licensed">Licensed</div>
-                <div class="trust-item" data-translate="trust_border">Canada ↔ USA</div>
-                <div class="trust-item" data-translate="trust_crew">Professional moving crew</div>
-                <div class="trust-item" data-translate="trust_pricing">Transparent pricing</div>
+            <div class="trust-marquee">
+                <div class="trust-track">
+                    <div class="trust-group">
+                        <div class="trust-item" data-translate="trust_insured">Fully insured</div>
+                        <div class="trust-item" data-translate="trust_licensed">Licensed</div>
+                        <div class="trust-item" data-translate="trust_border">Canada ↔ USA</div>
+                        <div class="trust-item" data-translate="trust_crew">Professional moving crew</div>
+                        <div class="trust-item" data-translate="trust_pricing">Transparent pricing</div>
+                    </div>
+                    <div class="trust-group" aria-hidden="true">
+                        <div class="trust-item" data-translate="trust_insured">Fully insured</div>
+                        <div class="trust-item" data-translate="trust_licensed">Licensed</div>
+                        <div class="trust-item" data-translate="trust_border">Canada ↔ USA</div>
+                        <div class="trust-item" data-translate="trust_crew">Professional moving crew</div>
+                        <div class="trust-item" data-translate="trust_pricing">Transparent pricing</div>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -194,9 +213,11 @@
 
                 <div class="work">
                     <div class="work-primary">
-                        <a class="work-card work-local" href="#quote" data-open-quote data-source="service" data-service="local">
+                        <a class="work-card work-local reveal" href="#quote" data-open-quote data-source="service" data-service="local">
                             <div class="work-media">
-                                <img src="visuals/opt/hero.jpg" width="1800" height="1200" alt="Muhtar crew moving a padded piano from a home onto a truck" data-translate-alt="svc_local_alt" loading="lazy">
+                                <div class="media-shift">
+                                    <img src="visuals/opt/hero.jpg" width="1800" height="1200" alt="Muhtar crew moving a padded piano from a home onto a truck" data-translate-alt="svc_local_alt" loading="lazy">
+                                </div>
                             </div>
                             <div class="work-copy">
                                 <div class="work-copy-text">
@@ -207,9 +228,11 @@
                             </div>
                         </a>
 
-                        <a class="work-card work-long" href="#quote" data-open-quote data-source="service" data-service="long-distance">
+                        <a class="work-card work-long reveal" href="#quote" data-open-quote data-source="service" data-service="long-distance">
                             <div class="work-media">
-                                <img src="visuals/opt/truck.jpg" width="1400" height="763" alt="Muhtar moving truck and crew in front of a residence" data-translate-alt="svc_long_alt" loading="lazy">
+                                <div class="media-shift">
+                                    <img src="visuals/opt/truck.jpg" width="1400" height="763" alt="Muhtar moving truck and crew in front of a residence" data-translate-alt="svc_long_alt" loading="lazy">
+                                </div>
                             </div>
                             <div class="work-copy">
                                 <div class="work-copy-text">
@@ -220,9 +243,11 @@
                             </div>
                         </a>
 
-                        <a class="work-card work-cross" href="#cross-border" data-service="cross-border">
+                        <a class="work-card work-cross reveal" href="#cross-border" data-service="cross-border">
                             <div class="work-media">
-                                <img src="visuals/opt/crew.jpg" width="1600" height="872" alt="Muhtar moving crew standing with a company truck" data-translate-alt="svc_cross_alt" loading="lazy">
+                                <div class="media-shift">
+                                    <img src="visuals/opt/crew.jpg" width="1600" height="872" alt="Muhtar moving crew standing with a company truck" data-translate-alt="svc_cross_alt" loading="lazy">
+                                </div>
                             </div>
                             <div class="work-copy">
                                 <div class="work-copy-text">
@@ -238,9 +263,11 @@
                     <div class="work-secondary">
                         <p class="work-also" data-translate="svc_also">Also part of the same operation</p>
                         <div class="work-minis">
-                            <a class="work-mini" href="#quote" data-open-quote data-source="service" data-service="commercial">
+                            <a class="work-mini reveal" href="#quote" data-open-quote data-source="service" data-service="commercial">
                                 <div class="work-media">
-                                    <img src="visuals/opt/work-commercial.jpg" width="800" height="365" alt="Forklift moving cartons on a warehouse floor" data-translate-alt="svc_comm_alt" loading="lazy">
+                                    <div class="media-shift">
+                                        <img src="visuals/opt/work-commercial.jpg" width="800" height="365" alt="Forklift moving cartons on a warehouse floor" data-translate-alt="svc_comm_alt" loading="lazy">
+                                    </div>
                                 </div>
                                 <div class="work-copy">
                                     <h3 data-translate="svc_comm_title">Commercial</h3>
@@ -248,9 +275,11 @@
                                     <span class="work-go" data-translate="svc_explore">Explore</span>
                                 </div>
                             </a>
-                            <a class="work-mini" href="#quote" data-open-quote data-source="service" data-service="packing">
+                            <a class="work-mini reveal" href="#quote" data-open-quote data-source="service" data-service="packing">
                                 <div class="work-media">
-                                    <img src="visuals/opt/packing.jpg" width="1400" height="763" alt="Dishes packed in divided cartons" data-translate-alt="svc_pack_alt" loading="lazy">
+                                    <div class="media-shift">
+                                        <img src="visuals/opt/packing.jpg" width="1400" height="763" alt="Dishes packed in divided cartons" data-translate-alt="svc_pack_alt" loading="lazy">
+                                    </div>
                                 </div>
                                 <div class="work-copy">
                                     <h3 data-translate="svc_pack_title">Packing</h3>
@@ -258,9 +287,11 @@
                                     <span class="work-go" data-translate="svc_explore">Explore</span>
                                 </div>
                             </a>
-                            <a class="work-mini" href="#quote" data-open-quote data-source="service" data-service="storage">
+                            <a class="work-mini reveal" href="#quote" data-open-quote data-source="service" data-service="storage">
                                 <div class="work-media">
-                                    <img src="visuals/opt/work-storage.jpg" width="860" height="588" alt="Palletized cartons ready for warehouse storage" data-translate-alt="svc_store_alt" loading="lazy">
+                                    <div class="media-shift">
+                                        <img src="visuals/opt/work-storage.jpg" width="860" height="588" alt="Palletized cartons ready for warehouse storage" data-translate-alt="svc_store_alt" loading="lazy">
+                                    </div>
                                 </div>
                                 <div class="work-copy">
                                     <h3 data-translate="svc_store_title">Storage</h3>
@@ -283,8 +314,10 @@
             <div class="container why-layout">
                 <figure class="why-photo film reveal">
                     <div class="film-frame">
-                        <video class="js-film" muted loop playsinline preload="none" poster="visuals/opt/video/care-poster.jpg" data-src="visuals/opt/video/care.mp4" disablepictureinpicture aria-hidden="true"></video>
-                        <img class="film-fallback" src="visuals/opt/video/care-poster.jpg" width="1280" height="720" alt="A Muhtar crew member wrapping a dish in tissue paper" data-translate-alt="why_photo_alt" loading="lazy">
+                        <div class="media-shift">
+                            <video class="js-film" muted loop playsinline preload="none" poster="visuals/opt/video/care-poster.jpg" data-src="visuals/opt/video/care.mp4" disablepictureinpicture aria-hidden="true"></video>
+                            <img class="film-fallback" src="visuals/opt/video/care-poster.jpg" width="1280" height="720" alt="A Muhtar crew member wrapping a dish in tissue paper" data-translate-alt="why_photo_alt" loading="lazy">
+                        </div>
                     </div>
                     <figcaption data-translate="why_caption">Protection is the job — not an add-on.</figcaption>
                 </figure>
@@ -295,6 +328,7 @@
                         <p data-translate="why_lede">Moving anxiety is rarely about the truck. It is about care, communication and whether the price will still be the price on the day.</p>
                     </div>
                     <div class="why-list">
+                        <div class="rail" data-rail aria-hidden="true"><span></span></div>
                         <article class="why-item reveal">
                             <h3 data-translate="why_1_title">Handled as if it cannot be replaced</h3>
                             <p data-translate="why_1_text">Furniture, instruments and fragile items are wrapped, padded and loaded by a trained crew — not left to chance on the ramp.</p>
@@ -320,8 +354,10 @@
             <div class="container process-split">
                 <figure class="process-film film reveal">
                     <div class="film-frame">
-                        <video class="js-film" muted loop playsinline preload="none" poster="visuals/opt/video/pack-poster.jpg" data-src="visuals/opt/video/pack.mp4" disablepictureinpicture aria-hidden="true"></video>
-                        <img class="film-fallback" src="visuals/opt/video/pack-poster.jpg" width="1600" height="900" alt="A Muhtar crew member sealing a wrapped item into a carton" data-translate-alt="film_pack_alt" loading="lazy">
+                        <div class="media-shift">
+                            <video class="js-film" muted loop playsinline preload="none" poster="visuals/opt/video/pack-poster.jpg" data-src="visuals/opt/video/pack.mp4" disablepictureinpicture aria-hidden="true"></video>
+                            <img class="film-fallback" src="visuals/opt/video/pack-poster.jpg" width="1600" height="900" alt="A Muhtar crew member sealing a wrapped item into a carton" data-translate-alt="film_pack_alt" loading="lazy">
+                        </div>
                     </div>
                     <figcaption data-translate="hero_caption">White-glove packing · Muhtar crew</figcaption>
                 </figure>
@@ -332,6 +368,7 @@
                     <p data-translate="process_lede">You do not need a perfect inventory to begin. A route, a size and a date are enough to start a quote.</p>
                 </div>
                 <div class="steps">
+                    <div class="rail" data-rail aria-hidden="true"><span></span></div>
                     <article class="step reveal">
                         <div class="step-num">01</div>
                         <h3 data-translate="step1_title">Tell us about your move</h3>
@@ -400,17 +437,22 @@
         </section>
 
         <section class="section cross" id="cross-border">
+            <div class="cross-watermark" data-float aria-hidden="true">Muhtar</div>
             <div class="container cross-grid">
                 <div class="reveal">
                     <p class="eyebrow" data-translate="cross_eyebrow">Canada ↔ USA</p>
                     <h2 data-translate="cross_title">One move. One coordinated team.</h2>
                     <p class="lede" data-translate="cross_lede">A border adds paperwork, not a second moving company. We plan customs documentation, inventory, transport and delivery as a single sequence.</p>
                     <figure class="cross-visual">
-                        <img src="visuals/opt/truck.jpg" width="1408" height="768" alt="Muhtar moving truck and crew in front of a residence" data-translate-alt="svc_long_alt" loading="lazy">
+                        <div class="media-shift">
+                            <img src="visuals/opt/truck.jpg" width="1408" height="768" alt="Muhtar moving truck and crew in front of a residence" data-translate-alt="svc_long_alt" loading="lazy">
+                        </div>
                         <figcaption class="corridor-caption" data-translate="cross_caption">Pickup in Canada or the US · Coordinated delivery on the other side</figcaption>
                     </figure>
                 </div>
-                <ol class="cross-points reveal">
+                <div class="cross-list reveal">
+                    <div class="rail" data-rail aria-hidden="true"><span></span></div>
+                <ol class="cross-points">
                     <li>
                         <span class="cross-index">01</span>
                         <div>
@@ -447,6 +489,7 @@
                         </div>
                     </li>
                 </ol>
+                </div>
             </div>
         </section>
 
@@ -506,9 +549,12 @@
 
         <section class="cta-band" id="quote-cta">
             <div class="cta-film" aria-hidden="true">
-                <img src="visuals/opt/hero.jpg" width="1408" height="768" alt="" loading="lazy">
+                <div class="media-shift">
+                    <img src="visuals/opt/hero.jpg" width="1408" height="768" alt="" loading="lazy">
+                </div>
             </div>
             <div class="cta-veil"></div>
+            <div class="hero-grain cta-grain" aria-hidden="true"></div>
             <div class="container">
                 <h2 data-translate="cta_ready_title">Ready to move?</h2>
                 <p data-translate="cta_ready_text">Tell us where you’re going. We’ll take it from there.</p>
@@ -670,8 +716,8 @@
                             <label for="quote-date" data-translate="quote_date_label">When are you moving?</label>
                             <input id="quote-date" type="date">
                         </div>
-                        <label class="field" style="display:flex;align-items:center;gap:.6rem;text-transform:none;letter-spacing:0;font-size:1rem;color:inherit;">
-                            <input id="quote-flexible" type="checkbox" style="width:auto;">
+                        <label class="field check-field">
+                            <input id="quote-flexible" type="checkbox">
                             <span data-translate="quote_flexible">Date is flexible</span>
                         </label>
                     </div>
