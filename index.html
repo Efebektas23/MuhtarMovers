@@ -598,7 +598,7 @@
                 <div class="section-head reveal">
                     <p class="eyebrow" data-translate="nav_contact">Contact</p>
                     <h2 data-translate="contact_title">Talk to the team handling the move.</h2>
-                    <p data-translate="contact_lede">Call, email, or WhatsApp. Vancouver and Orlando answer as one operation.</p>
+                    <p data-translate="contact_lede">Call, email, or send a note. Vancouver and Orlando answer as one operation.</p>
                 </div>
                 <div class="contact-grid">
                     <a href="tel:+17783482208">
@@ -609,15 +609,37 @@
                         <span data-translate="contact_email">Email</span>
                         <strong>moving@muhtar.ca</strong>
                     </a>
-                    <a href="https://wa.me/905333022974" target="_blank" rel="noopener">
-                        <span>WhatsApp</span>
-                        <strong data-translate="contact_message">Message</strong>
-                    </a>
                     <div class="contact-offices">
                         <span data-translate="footer_offices">Offices</span>
                         <strong>Vancouver, BC<br>Orlando, FL</strong>
                     </div>
                 </div>
+                <form class="contact-box" id="contact-form">
+                    <p class="contact-box-label" data-translate="contact_message">Message</p>
+                    <div class="contact-fields">
+                        <label>
+                            <span data-translate="quote_name">Name</span>
+                            <input id="contact-name" name="name" type="text" autocomplete="name" required>
+                        </label>
+                        <label>
+                            <span data-translate="quote_phone">Phone</span>
+                            <input id="contact-phone" name="phone" type="tel" autocomplete="tel" required>
+                        </label>
+                        <label>
+                            <span data-translate="quote_email">Email</span>
+                            <input id="contact-email" name="email" type="email" autocomplete="email" required>
+                        </label>
+                    </div>
+                    <label class="contact-note">
+                        <span data-translate="contact_note">Note</span>
+                        <textarea id="contact-note" name="note" required></textarea>
+                    </label>
+                    <input class="contact-honey" type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true">
+                    <div class="contact-send-row">
+                        <button class="btn btn-primary" id="contact-send" type="submit" data-translate="contact_send">Send</button>
+                        <p class="contact-status" id="contact-status" role="status" hidden></p>
+                    </div>
+                </form>
                 <div class="contact-actions">
                     <button class="btn btn-primary" type="button" data-open-quote data-source="contact" data-translate="cta_quote">Get a Quote</button>
                 </div>

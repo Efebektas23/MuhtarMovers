@@ -887,6 +887,109 @@
     }
   }
 
+  function initContactForm() {
+    var form = $("#contact-form");
+    if (!form) return;
+    var status = $("#contact-status");
+    var sendBtn = $("#contact-send");
+
+    function setStatus(key, isError) {
+      if (!status) return;
+      status.dataset.statusKey = key || "";
+      status.hidden = !key;
+      status.textContent = key ? t(key) : "";
+      status.classList.toggle("is-error", !!isError);
+    }
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (form.classList.contains("is-sending") || form.classList.contains("is-sent")) return;
+      var honey = form.querySelector("[name='_honey']");
+      if (honey && honey.value) return;
+
+      var name = ($("#contact-name").value || "").trim();
+      var phone = ($("#contact-phone").value || "").trim();
+      var email = ($("#contact-email").value || "").trim();
+      var note = ($("#contact-note").value || "").trim();
+      if (!name || !phone || !email || !note) {
+        setStatus("contact_required", true);
+        return;
+      }
+
+      form.classList.add("is-sending");
+      if (sendBtn) {
+        sendBtn.disabled = true;
+        sendBtn.textContent = t("quote_sending");
+      }
+      setStatus("", false);
+
+      var subject = "Website message — " + name;
+      var body = [
+        "Website message",
+        "",
+        "Name: " + name,
+        "Phone: " + phone,
+        "Email: " + email,
+        "",
+        "Note:",
+        note
+      ].join("\n");
+      var data = {
+        _subject: subject,
+        _template: "table",
+        _captcha: "false",
+        _replyto: email,
+        name: name,
+        phone: phone,
+        email: email,
+        note: note,
+        source: window.location.href
+      };
+      var href = "mailto:" + EMAIL +
+        "?subject=" + encodeURIComponent(subject) +
+        "&body=" + encodeURIComponent(body);
+      var send = window.MuhtarLeadMail && window.MuhtarLeadMail.send;
+
+      function finish(ok) {
+        form.classList.remove("is-sending");
+        if (sendBtn) {
+          sendBtn.disabled = false;
+          sendBtn.textContent = t("contact_send");
+        }
+        if (ok) {
+          form.classList.add("is-sent");
+          form.reset();
+          setStatus("contact_sent", false);
+          return;
+        }
+        setStatus("contact_err", true);
+      }
+
+      if (typeof send !== "function") {
+        finish(false);
+        return;
+      }
+
+      send({
+        email: EMAIL,
+        data: data,
+        mailtoHref: href,
+        subject: subject,
+        body: body,
+        timeoutMs: 12000
+      }).then(function () {
+        finish(true);
+      }).catch(function () {
+        finish(false);
+      });
+    });
+
+    document.addEventListener("languageChanged", function () {
+      if (sendBtn && !form.classList.contains("is-sending")) sendBtn.textContent = t("contact_send");
+      if (status && status.dataset.statusKey) setStatus(status.dataset.statusKey, status.classList.contains("is-error"));
+    });
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     initHeader();
     initFilms();
@@ -895,6 +998,7 @@
     initFaq();
     initTracking();
     initQuote();
+    initContactForm();
     loadMaps();
     bindPlaces();
     document.addEventListener("languageChanged", function () {
