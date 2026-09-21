@@ -855,6 +855,12 @@ html.js .reveal.is-in {
   .header-inner { gap: 0.8rem; }
 }
 
+@media (max-width: 1120px) {
+  .nav { gap: 0.65rem; }
+  .nav a { letter-spacing: 0.03em; font-size: 0.68rem; }
+  .header-inner { gap: 0.55rem; }
+}
+
 @media (max-width: 1024px) {
   .why-photo,
   .process-film { position: static; }
@@ -938,7 +944,8 @@ html.js .reveal.is-in {
   .mobile-nav.is-open a:nth-child(6) { transition-delay: 0.24s; }
   .mobile-nav.is-open a:nth-child(7) { transition-delay: 0.28s; }
   .mobile-nav.is-open a:nth-child(8) { transition-delay: 0.32s; }
-  .mobile-nav.is-open .mobile-nav-cta { transition-delay: 0.38s; }
+  .mobile-nav.is-open a:nth-child(9) { transition-delay: 0.36s; }
+  .mobile-nav.is-open .mobile-nav-cta { transition-delay: 0.42s; }
 
   .page-home .mobile-nav a {
     font-family: var(--font-display);

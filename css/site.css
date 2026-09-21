@@ -343,6 +343,7 @@ ul { margin: 0; padding: 0; list-style: none; }
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--ink-soft);
+  white-space: nowrap;
 }
 
 .nav a:hover { color: var(--ink); }
@@ -1048,6 +1049,8 @@ ul { margin: 0; padding: 0; list-style: none; }
 }
 
 .step p { color: var(--ink-soft); font-size: 1rem; padding-right: 1rem; }
+
+.process-more { margin: 1.35rem 0 0; }
 
 /* Cross-border */
 
